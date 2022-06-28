@@ -5,11 +5,17 @@ import CreateAccount from './components/CreateAccount';
 import { NavigationContainer } from '@react-navigation/native';
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { initializeApp } from "firebase/app";
+import { getFirestore } from "firebase/firestore"
+import { firebaseConfig } from "./firebase.js"
 
 
 
 
 function App() {
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
   const Stack = createNativeStackNavigator();
   const [userLoggedIn, setUserLoggedIn] = React.useState(false)
