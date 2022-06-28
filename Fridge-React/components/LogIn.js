@@ -1,60 +1,89 @@
 import * as React from 'react';
-import { View, Text, TextInput } from 'react-native';
+import { View, Text, TextInput, Button } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
-import LoginScreen, { SocialButton } from "react-native-login-screen";
-import CreateAccount from './CreateAccount';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 
-export default function LogIn({navigation}, event) {
+
+export default function LogIn({navigation}) {
+
+    const auth = getAuth();
 
 const [email, setEmail] = React.useState('')
-// console.log(email, "<<< email");
+const [password, setPassword] = React.useState('')
+const [emailError, setEmailError] = React.useState(false)
+const [passwordError, setPasswordError] = React.useState(false)
 
-// const auth = getAuth();
-// signInWithEmailAndPassword(auth, "mj@emailwebsite.com", "password123")
-//   .then((userCredential) => {
-//     // Signed in 
-//     const user = userCredential.user;
-//     // ...
-//   })
-//   .catch((error) => {
-//     const errorCode = error.code;
-//     const errorMessage = error.message;
-//   });
+
+
+
+
 
 
 const handleLogIn = () => {
+    signInWithEmailAndPassword(auth, email, password)
+  .then((userCredential) => {
+   
+    const user = userCredential.user;
+ 
+  })
+  .catch((error) => {
+    const errorCode = error.code;
+    const errorMessage = error.message;
+    if (errorCode === "auth/wrong-password") {
+        setPasswordError(true);
+    }
+
+    if (errorCode === "auth/user-not-found" || errorCode === "auth/invalid-email" ) {
+        setEmailError(true)
+    }
+    
+  });
     
 }
 
-const handleFacebook = () => {
-    console.log('Facebook');
-}
-
-function handleEmail(newText) {
-setEmail((currText) => {return currText + newText })
-}
 
 
     return (
-//         <ScrollView>
-// <LoginScreen
-//   logoImageSource={require("../assets/icon.png")}
-// onLoginPress={() => {handleLogIn()}}
-// onSignupPress={() => {navigation.navigate('Create Account')}}
-// onEmailChange={console.log}
-// onPasswordChange={() => {}}
-// onFacebookPress={() => {handleFacebook()}}
-// />
-// </ScrollView>
 <>
-<Text>Hello</Text>
+
 <TextInput
-        style={{height: 40}}
-        placeholder="Type here to translate!"
-        onChangeText={newText => setText(newText)}
+        style={{height: 40, marginTop: 15,
+            backgroundColor: "white",
+            borderWidth: 1,
+            borderColor: 'grey',
+            padding: 10,
+            fontSize: 20}}
+        placeholder="Email"
+        onChangeText={newText => {setEmail(newText); setEmailError(false)}}
         defaultValue={""}
       />
+{emailError && <Text>Invalid Email</Text>}
+
+<TextInput
+        style={{height: 40, marginTop: 15,
+            backgroundColor: "white",
+            borderWidth: 1,
+            borderColor: 'grey',
+            padding: 10,
+            fontSize: 20}}
+        placeholder="Password"
+        onChangeText={newText => {setPassword(newText); setPasswordError(false)}}
+        defaultValue={""}
+      />
+      {passwordError && <Text>Wrong Password</Text>}
+      <Button
+  onPress={handleLogIn}
+  title="Login"
+  color="#841584"
+  accessibilityLabel="Login Button"
+/>
+<Button
+  onPress={() => {navigation.navigate('Create Account')}}
+  title="Create Account"
+  color="#841584"
+  accessibilityLabel="Create account button"
+/>
+     
       </>
 
     )
