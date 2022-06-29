@@ -12,6 +12,7 @@ import { firebaseConfig } from "./firebase.js"
 
 
 
+
 function App() {
 
   const app = initializeApp(firebaseConfig);
@@ -21,12 +22,16 @@ function App() {
   const [userLoggedIn, setUserLoggedIn] = React.useState(false)
 
   const auth = getAuth();
+
+  
+  
 onAuthStateChanged(auth, (user) => {
   if (user) {
     // User is signed in, see docs for a list of available properties
     // https://firebase.google.com/docs/reference/js/firebase.User
     const uid = user.uid;
     setUserLoggedIn(true);
+  
     // ...
   } else {
     setUserLoggedIn(false)
@@ -39,7 +44,7 @@ onAuthStateChanged(auth, (user) => {
 
   
   
-  if (userLoggedIn) {
+  if (!userLoggedIn) {
   return (
     <>
     <NavigationContainer>
