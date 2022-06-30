@@ -1,3 +1,5 @@
+import { StyleSheet } from "react-native";
+
 export const styles = StyleSheet.create({
     card: {
       borderRadius: '25%',
@@ -17,16 +19,32 @@ export const styles = StyleSheet.create({
     },
     img: {
       flex: 1,
-      width: 80,
-      height: 80,
-      resizeMode: 'contain' 
+      // width: 80,
+      // height: 80,
+      resizeMode: 'contain',
+      border: 'solid black 2px',
+      color: 'black',
+
     },
     buttons: {
       display: 'flex',
-      justifyContent: 'space-between',
+      alignContent: 'center',
+      backgroundColor: 'black',
+      color: '',
+      marginLeft: '38%',
+      marginBottom: '3%',
+      
     },
     search: {
       marginTop: '3%',
       marginBottom: '3%'
+    },
+    dropdown: {
+      marginTop: '5%'
+    },
+    title: {
+      fontSize: 35,
+      marginBottom: 5,
     }
+
   });
