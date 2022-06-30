@@ -1,15 +1,14 @@
+import axios from 'axios';
+import { initializeApp } from "firebase/app";
+import { getAuth } from 'firebase/auth';
+import { doc, getFirestore, setDoc } from 'firebase/firestore';
 import * as React from 'react';
-import { View, Text, StyleSheet, ScrollView, TextInput} from 'react-native';
-import SearchBar from "react-native-dynamic-search-bar";
-import axios from 'axios'
-import { CardContent, CardImage, Card, CardAction, CardButton, CardTitle } from 'react-native-cards';
+import { ScrollView, StyleSheet, Text, TextInput } from 'react-native';
+import { Card, CardButton, CardContent, CardImage } from 'react-native-cards';
 import DateField from 'react-native-datefield';
 import DropDownPicker from 'react-native-dropdown-picker';
-import {doc, setDoc} from 'firebase/firestore'
+import SearchBar from "react-native-dynamic-search-bar";
 import { firebaseConfig } from '../../firebase';
-import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore"
-import { getAuth } from 'firebase/auth';
 
 export default function AddItemScreen({navigation}) {
 
