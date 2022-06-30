@@ -4,6 +4,10 @@ import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 
 import SearchBar from "react-native-dynamic-search-bar";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { styles } from '../../stylesheet';
+import { getFirestore, getDocs, collection } from 'firebase/firestore';
+import { getAuth } from 'firebase/auth';
+import { firebaseConfig } from '../../firebase';
+import { initializeApp } from 'firebase/app' 
 
 
 
@@ -42,13 +46,33 @@ const styles = StyleSheet.create({
 
 export default function HomeScreen({navigation}) {
 
-    //Today's date
-    let now = new Date();
-    let day = ("0" + now.getDate()).slice(-2);
-    let month = ("0" + (now.getMonth() + 1)).slice(-2);
-    let today = (day) + "/" + (month) + "/" + now.getFullYear();
-    
 
+  const [fridge, setFridge] = React.useState([])
+
+  
+  React.useEffect(() => {
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth();
+    const colRef = collection(db, `${auth.currentUser.uid}/data/fridge`)
+    const items = []
+      
+      getDocs(colRef).then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+      items.push({...doc.data(), id : doc.id})
+    }).then((items) => {
+       // setFridge(items)
+       console.log(items);
+      }).catch((err) => {
+        console.log(err);
+      })
+     
+    })
+  }, [fridge])
+  
+  console.log(fridge);
+  
     //States for dropdown selector
     const [open, setOpen] = React.useState(false);
     const [value, setValue] = React.useState('all');
@@ -113,19 +137,22 @@ export default function HomeScreen({navigation}) {
     <CardAction 
       separator={true} 
       inColumn={false}>
+        
           <CardTitle 
-        subtitle="6" 
-        />
+        subtitle="6"/>
+
       <CardButton
         onPress={() => {alert('Added to shopping list!')}}
         title="Add To List"
         color="#FEB557"
         />
+
       <CardButton
         onPress={() => {}}
         title="Change Quantity"
         color="#FEB557"
         />
+        
     </CardAction>
 
   </Card>
