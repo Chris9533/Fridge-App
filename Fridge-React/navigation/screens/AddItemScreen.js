@@ -36,7 +36,7 @@ export default function AddItemScreen({navigation}) {
     const [selectWeight, setSelectWeight] = React.useState(null)
     const [selectQuantity, setSelectQuantity] = React.useState(null)
 
-    console.log(selectQuantity, selectWeight, value)
+  
    
     
 
@@ -155,7 +155,7 @@ export default function AddItemScreen({navigation}) {
                 { if (value === "Select category" && selectWeight === null && selectQuantity === null){
                      Popup.show({
                         type: 'Warning',
-                        title: 'Please select a weight or quantity and a category',
+                        title: 'Please select a weight/quantity and a category',
                         button: true,
                         textBody: ``,
                         buttonText: 'Dismiss',
