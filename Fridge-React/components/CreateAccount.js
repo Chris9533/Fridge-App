@@ -1,6 +1,6 @@
+import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import * as React from 'react';
-import { View, Text, TextInput, Button } from 'react-native';
-import { getAuth, createUserWithEmailAndPassword } from "firebase/auth";
+import { Button, Text, TextInput } from 'react-native';
 
 export default function CreateAccount() {
 
