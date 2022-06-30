@@ -43,7 +43,6 @@ export default function AddItemScreen({ navigation }) {
 
   console.log(selectQuantity, selectWeight, value);
 
-
   const handleSearch = () => {
     if (searchTerm.length > 0) {
       axios
@@ -53,33 +52,6 @@ export default function AddItemScreen({ navigation }) {
         .then((res) => {
           setSearchResults(res.data.results);
         });
-
-    const [searchTerm, setSearchTerm] = React.useState('')
-    const [searchResults, setSearchResults] = React.useState([])
-    const [date, setDate] = React.useState(new Date())
-    const [open, setOpen] = React.useState(false);
-    const [value, setValue] = React.useState('Select category');
-    const [items, setItems] = React.useState([
-      {label: 'Fridge', value: 'fridge'},
-      {label: 'Freezer', value: 'freezer'},
-      {label: 'Pantry', value: 'pantry'}
-    ]);
-    const [amount, setAmount] = React.useState('')
-    const [selectWeight, setSelectWeight] = React.useState(null)
-    const [selectQuantity, setSelectQuantity] = React.useState(null)
-
-  
-   
-    
-
-    const handleSearch = () => {
-        if(searchTerm.length > 0) {
-            axios.get(`https://api.spoonacular.com/food/ingredients/search?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&query=${searchTerm}&number=5`)
-            .then(res => {
-                setSearchResults(res.data.results)
-            })
-        }
-
     }
   };
 
@@ -141,6 +113,7 @@ export default function AddItemScreen({ navigation }) {
           <ScrollView>
             {searchResults &&
               searchResults.map((item) => {
+                
                 return (
                   <>
                     <Card style={styles.card} key={item.id}>
@@ -216,34 +189,6 @@ export default function AddItemScreen({ navigation }) {
                         listMode="MODAL"
                         placeholder="Select a category"
                       />
-
-                        listMode='MODAL'
-                        placeholder='Select a category'/>
-
-<TouchableOpacity>
-            <CardButton 
-            title='Add item'
-            onPress={() =>
-                { if (value === "Select category" && selectWeight === null && selectQuantity === null){
-                     Popup.show({
-                        type: 'Warning',
-                        title: 'Please select a weight/quantity and a category',
-                        button: true,
-                        textBody: ``,
-                        buttonText: 'Dismiss',
-                        callback: () => Popup.hide()
-                      })
-                } else if (value === "Select category"){
-                    Popup.show({
-                        type: 'Warning',
-                        title: 'Please select a Category',
-                        button: true,
-                        textBody: ``,
-                        buttonText: 'Dismiss',
-                        callback: () => Popup.hide()
-                      })
-
-
 
                       <TouchableOpacity>
                         <CardButton
