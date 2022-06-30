@@ -3,7 +3,10 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity} from 'react-nativ
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'
 import SearchBar from "react-native-dynamic-search-bar";
 import DropDownPicker from 'react-native-dropdown-picker';
+import { styles } from '../../stylesheet';
 
+
+<<<<<<< HEAD
 const styles = StyleSheet.create({
   card: {
     borderRadius: 25,
@@ -36,6 +39,8 @@ const styles = StyleSheet.create({
     marginBottom: '3%'
   }
 });
+=======
+>>>>>>> fafa6a618f6516e7b9fba2189536f8c161f28863
 
 export default function HomeScreen({navigation}) {
 
