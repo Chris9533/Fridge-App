@@ -84,6 +84,7 @@ const [existingEmail, setExistingEmail] = React.useState(false)
             fontSize: 20}}
         placeholder="Password"
         onChangeText={newText => {setPassword(newText)}}
+        secureTextEntry={true}
         defaultValue={""}
       />
      
@@ -96,6 +97,7 @@ const [existingEmail, setExistingEmail] = React.useState(false)
             fontSize: 20}}
         placeholder="Confirm Password"
         onChangeText={newText => {setConfirmPassword(newText)}}
+        secureTextEntry={true}
         defaultValue={""}
       />
       {passwordError && <Text>Password must be 6 characters</Text>}

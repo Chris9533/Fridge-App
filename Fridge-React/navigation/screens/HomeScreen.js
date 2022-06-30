@@ -6,7 +6,7 @@ import DropDownPicker from 'react-native-dropdown-picker';
 
 const styles = StyleSheet.create({
   card: {
-    borderRadius: '25%',
+    borderRadius: 25,
     marginBottom: '3%'
   },
   container: {

@@ -68,6 +68,7 @@ const handleLogIn = () => {
             fontSize: 20}}
         placeholder="Password"
         onChangeText={newText => {setPassword(newText); setPasswordError(false)}}
+        secureTextEntry={true}
         defaultValue={""}
       />
       {passwordError && <Text>Wrong Password</Text>}
