@@ -3,6 +3,9 @@ import { StyleSheet, View, Text, ScrollView, TouchableOpacity} from 'react-nativ
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'
 import SearchBar from "react-native-dynamic-search-bar";
 import DropDownPicker from 'react-native-dropdown-picker';
+import { styles } from '../../stylesheet';
+
+
 
 const styles = StyleSheet.create({
   card: {

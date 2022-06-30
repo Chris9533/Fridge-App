@@ -3,12 +3,13 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from 'firebase/auth';
 import { doc, getFirestore, setDoc } from 'firebase/firestore';
 import * as React from 'react';
-import { ScrollView, StyleSheet, Text, TextInput } from 'react-native';
+import { ScrollView, StyleSheet, Text, TextInput, View, TouchableOpacity } from 'react-native';
 import { Card, CardButton, CardContent, CardImage } from 'react-native-cards';
 import DateField from 'react-native-datefield';
 import DropDownPicker from 'react-native-dropdown-picker';
 import SearchBar from "react-native-dynamic-search-bar";
 import { firebaseConfig } from '../../firebase';
+import { Root, Popup } from 'popup-ui'
 
 export default function AddItemScreen({navigation}) {
 
@@ -32,8 +33,12 @@ export default function AddItemScreen({navigation}) {
       {label: 'Pantry', value: 'pantry'}
     ]);
     const [amount, setAmount] = React.useState('')
-    const [selectWeight, setSelectWeight] = React.useState('')
-    const [selectQuantity, setSelectQuantity] = React.useState('')
+    const [selectWeight, setSelectWeight] = React.useState(null)
+    const [selectQuantity, setSelectQuantity] = React.useState(null)
+
+  
+   
+    
 
     const handleSearch = () => {
         if(searchTerm.length > 0) {
@@ -61,12 +66,20 @@ export default function AddItemScreen({navigation}) {
         const auth = getAuth();
         const itemObj = {title: name, expDate: date, amount: selectWeight ? selectWeight : selectQuantity, category: value, image: image}
         setDoc(doc(db, auth.currentUser.uid, 'data', value, name), {itemObj})
+        .then(() => {
+            setSearchTerm("")
+            setSearchResults([])
+            setSelectQuantity(null)
+            setSelectWeight(null)
+            setValue('Select category')
+        })
         .catch((error) => {
          const errorCode = error.code;
          const errorMessage = error.message;
          console.log(errorCode)
         })
     }
+
 
     return (
         <>
@@ -83,6 +96,10 @@ export default function AddItemScreen({navigation}) {
                 onClearPress={() => setSearchTerm("")}
                 //   onPress={() => alert("onPress")}
             />
+            <Root>
+    <View>
+    </View>
+</Root>
         <ScrollView>
             
             {searchResults && searchResults.map(item => {
@@ -130,11 +147,54 @@ export default function AddItemScreen({navigation}) {
                         setItems={setItems}
                         listMode='MODAL'
                         placeholder='Select a category'/>
+
+<TouchableOpacity>
+            <CardButton 
+            title='Add item'
+            onPress={() =>
+                { if (value === "Select category" && selectWeight === null && selectQuantity === null){
+                     Popup.show({
+                        type: 'Warning',
+                        title: 'Please select a weight/quantity and a category',
+                        button: true,
+                        textBody: ``,
+                        buttonText: 'Dismiss',
+                        callback: () => Popup.hide()
+                      })
+                } else if (value === "Select category"){
+                    Popup.show({
+                        type: 'Warning',
+                        title: 'Please select a Category',
+                        button: true,
+                        textBody: ``,
+                        buttonText: 'Dismiss',
+                        callback: () => Popup.hide()
+                      })
+
+
+                } else if (selectWeight === "" && selectQuantity === "") {
+                    Popup.show({
+                        type: 'Warning',
+                        title: 'Please select a  weight or quantity',
+                        button: true,
+                        textBody: ``,
+                        buttonText: 'Dismiss',
+                        callback: () => Popup.hide()
+                      })
+                } else {Popup.show({
+                  type: 'Success',
+                  title: 'Item Added',
+                  button: true,
+                  textBody: `${item.name} has been added to your storage`,
+                  buttonText: 'Dismiss',
+                  callback: () => Popup.hide()
+                });  addItemFirebase(item.name, item.image)}
+            }
+              }
+             /> 
+            
+        </TouchableOpacity>
                         
-                        <CardButton 
-                        title='Add item'
-                        onPress={() => {addItemFirebase(item.name, item.image)}}
-                         /> 
                    
                     </Card>
                    
