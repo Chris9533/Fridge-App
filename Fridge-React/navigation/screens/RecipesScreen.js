@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, Text } from 'react-native';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, getDocs, collection, setDoc, doc } from 'firebase/firestore';
+import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { firebaseConfig } from '../../firebase';
 import moment from 'moment';
@@ -21,12 +21,13 @@ export default function RecipesScreen({navigation}) {
     const [selectRecipe, setSelectRecipe] = React.useState(false)
     const [recipeId, setRecipeId] = React.useState('')
     const [recipeData, setRecipeData] = React.useState()
-    
+    const [firebaseData, setFirebaseData] = React.useState([])
+   
 
     React.useEffect(() => {
        
 
-        const ingredientsArr = []
+         let ingredientsArr = []
         let ingredientsStr = ''
         const recipeArr = []
        
@@ -56,6 +57,8 @@ export default function RecipesScreen({navigation}) {
             ingredientsArr = ingredientsArr.slice(0,5)
         }
 
+        setFirebaseData(ingredientsArr)
+
         ingredientsArr.forEach((ing, i) => {
             if((i+1) === ingredientsArr.length) {   
                 ingredientsStr += `${ing.itemObj.title.replace(/\s+/g, '')}`
@@ -65,7 +68,7 @@ export default function RecipesScreen({navigation}) {
             }
                 })
 
-        axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&ingredients=${ingredientsStr}&number=5`)
+        axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=39f4abc5175f4647aff9f73a69ec58d6&ingredients=${ingredientsStr}&number=5`)
             .then(res => {
                 res.data.forEach(recipe => {
                     recipeArr.push({title: recipe.title, img: recipe.image, ingTotal: recipe.usedIngredientCount + recipe.missedIngredientCount, ingUsedCount: recipe.usedIngredientCount, ingMatch: recipe.usedIngredients.map(recipe => {return recipe.name}),ingMissing: recipe.missedIngredients.map(recipe => {return recipe.name}), id: recipe.id}) 
@@ -82,21 +85,43 @@ export default function RecipesScreen({navigation}) {
         setRecipeIsLoading(true)
         setSelectRecipe(curr => !curr)
         setRecipeId(id)
-        axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&includeNutrition=false`)
+        axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=39f4abc5175f4647aff9f73a69ec58d6&includeNutrition=false`)
         .then(res => {
-            setRecipeData({source: res.data.sourceUrl, veggie: res.data.vegetarian})
+            setRecipeData({source: res.data.sourceUrl, veggie: res.data.vegetarian, fullIng: res.data.extendedIngredients})
             setRecipeIsLoading(false)
         })
     }
 
-    const handleYum = () => {
-        console.log('yum')
+    const handleYum = (ingObj) => {
+        const firebaseIng = []
+        const firebaseComp = []
+        const firebaseCategory = []
+        firebaseData.forEach(item => {
+            firebaseCategory.push({title: item.id, category: item.itemObj.category})
+            firebaseComp.push(item.id)
+        })
+        ingObj.forEach(ing => {
+            firebaseIng.push({title: ing.name, amount: ing.amount})
+        })
+        const filteredIng = firebaseIng.filter(item => {
+            return firebaseComp.includes(item.title)
+        })
+        filteredIng.map(item => {
+          firebaseCategory.forEach(obj => {
+                if(item.title === obj.title) {
+                   item.category = obj.category
+                }
+            })
+        })
+        filteredIng.forEach(item => {
+            updateDoc(doc(db, auth.currentUser.uid, 'data', item.category, item.title), {'itemObj.amount': increment(-item.amount)})
+        })
     }
 
     const handleShoppingPress = (ingList) => {
         ingList.forEach(item => {
            const itemObj = {title: item}
-            setDoc(doc(db, auth.currentUser.uid, 'data', 'Shopiing List', item), {itemObj})
+            setDoc(doc(db, auth.currentUser.uid, 'data', 'Shopping List', item), {itemObj})
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
@@ -119,17 +144,17 @@ export default function RecipesScreen({navigation}) {
                         <>
                         <Text>{'You Have'}</Text> 
                         {recipe.ingMatch.map(name => {
-                            return <Text>{name}</Text>
+                            return <Text key={name}>{name}</Text>
                         })}
                         <Text>{'You Need'}</Text>
                         {recipe.ingMissing.map(name => {
-                            return <Text>{name}</Text>
+                            return <Text key={name}>{name}</Text>
                         })}
                         <Text>{'Instructions'}</Text>
                         {recipeIsLoading ? <Text>'Loading...'</Text> : <Text>{recipeData.source}</Text>}
                         <Text>{'Veggie?'}</Text>
                         {recipeIsLoading ? <Text>'Loading...'</Text> : <Text>{recipeData.veggie.toString()}</Text>}
-                        <CardButton title='Yum' onPress={handleYum}/>
+                        <CardButton title='Yum' onPress={() => {handleYum(recipeData.fullIng)}}/>
                         <CardButton title='Add Missing to List' onPress={() => {handleShoppingPress(recipe.ingMissing)}}/>
                         </>
                         : 
