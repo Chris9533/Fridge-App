@@ -107,7 +107,6 @@ export default function AddItemScreen({ navigation }) {
             onChangeText={(text) => setSearchTerm(text)}
             onSearchPress={() => handleSearch()}
             onClearPress={() => setSearchTerm("")}
-            onKeyPress
             //   onPress={() => alert("onPress")}
           />
 
@@ -127,12 +126,12 @@ export default function AddItemScreen({ navigation }) {
                       
                         <Text style={styles.title}>
                             
-                              {item.name}
+                              {`[ ${item.name} ]`}
                             
                           </Text>
 
                       <CardAction separator={true} inColumn={false}>
-                        <Text>     Expiry Date:</Text>
+                        <Text style={styles.white}>                      Expiry Date:       </Text>
                         <DateField
                           defaultValue={new Date()}
                           styleInput={{ fontSize: 15 }}
@@ -141,6 +140,8 @@ export default function AddItemScreen({ navigation }) {
                             backgroundColor: "#f4f4f4",
                             padding: 10,
                             marginLeft: 50,
+                            marginTop: 5,
+                            marginBottom: 5,
                           }}
                           onSubmit={(value) => setDate(value)}
                         />
@@ -166,12 +167,16 @@ export default function AddItemScreen({ navigation }) {
                         />
 
                         <CardButton
+                        //   style={styles.buttons2}
                           title="Weight (grams)"
+                          color="white"
                           onPress={() => {
                             weightSelected();
                           }}
                         />
                         <CardButton
+                        // style={styles.buttons2}
+                          color="white"
                           title="Quantity"
                           onPress={() => {
                             quantitySelected();
@@ -195,6 +200,7 @@ export default function AddItemScreen({ navigation }) {
                         <CardButton
                           style={styles.buttons}
                           title="Add item"
+                          color={'#132257'}
                           onPress={() => {
                             if (
                               value === "Select category" &&
