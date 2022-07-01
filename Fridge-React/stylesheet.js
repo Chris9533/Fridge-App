@@ -3,19 +3,22 @@ import { StyleSheet } from "react-native";
 export const styles = StyleSheet.create({
 
     main: {
-      backgroundColor: 'black',
+      // backgroundColor: '#00A693',
     },
 
     card: {
-      borderRadius: 25,
+      borderRadius: 10,
       marginBottom: '3%',
-      // backgroundColor: '',
+      backgroundColor: 'lightgrey',
     },
     container: {
       display: 'grid',
     },
     red: {
       color: 'red',
+    },
+    white: {
+      color: 'white',
     },
     yellow: {
       color: 'yellow',
@@ -25,25 +28,26 @@ export const styles = StyleSheet.create({
     },
     img: {
       flex: 1,
-      // width: 80,
-      // height: 80,
       resizeMode: 'contain',
-      border: 'solid black 2px',
-      // color: 'black',
-      // marginTop: '5%',
-      padding: '2%',
+      marginTop: '5%',
+      // padding: '2%',
 
     },
     buttons: {
       display: 'flex',
       alignContent: 'center',
-      // backgroundColor: 'green',
-      color: '',
+      // backgroundColor: 'white',
       marginLeft: '38%',
       marginBottom: '3%',
-      
-      
     },
+
+    buttons2: {
+      display: 'flex',
+      alignContent: 'center',
+      backgroundColor: 'white',
+      color: '',
+    },
+
     search: {
       marginTop: '3%',
       marginBottom: '3%'
@@ -52,11 +56,16 @@ export const styles = StyleSheet.create({
       marginTop: '5%'
     },
     title: {
-      fontSize: 35,
+      fontSize: 30,
+      marginTop: 5,
       marginBottom: 5,
+      marginLeft: 10,
       textTransform: 'capitalize',
       fontStyle: 'italic',
-      color: 'orange',
+      fontFamily: 'Futura-Medium', 
+      color: '#132257',
+      opacity: 1,
+      
     }
 
   });

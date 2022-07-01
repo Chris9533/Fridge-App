@@ -111,21 +111,23 @@ return (
 <Card key={item.id} style={styles.card}>
 
 <CardImage
+  style={styles.img}
   source={{uri: `https://spoonacular.com/cdn/ingredients_250x250/${item.itemObj.image}`}} 
-  title={item.itemObj.title}
-  size="2"
   />
+
+<Text style={styles.title}>
+{`[ ${item.itemObj.title} ]`}
+</Text>
 
 <CardAction
 separator={true}
 inColumn={false}>
 
 
-<CardTitle 
-subtitle={`Stored In: ${item.itemObj.category}`} 
-/>
 
-<Text style={styles.red}>{` days remaining`}</Text>
+<CardTitle subtitle={`Stored In: ${item.itemObj.category}`} />
+
+<Text style={styles.red}>{`2 days remaining`}</Text>
 
 </CardAction>
 
@@ -133,19 +135,19 @@ subtitle={`Stored In: ${item.itemObj.category}`}
 separator={true} 
 inColumn={false}>
   
-    <CardTitle 
-  subtitle={item.itemObj.amount}/>
+    <CardTitle
+  subtitle={`${item.itemObj.amount} In Stock`}/>
 
 <CardButton
   onPress={() => {alert('Added to shopping list!')}}
   title="Add To List"
-  color="#FEB557"
+  color="white"
   />
 
 <CardButton
   onPress={() => {}}
   title="Change Quantity"
-  color="#FEB557"
+  color="white"
   />
   
 </CardAction>
