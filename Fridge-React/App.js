@@ -8,6 +8,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { initializeApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore"
 import { firebaseConfig } from "./firebase.js"
+import { styles } from './stylesheet';
 
 
 
@@ -67,7 +68,7 @@ onAuthStateChanged(auth, (user) => {
   )
   } else {
     return (
- <MainContainer />
+ <MainContainer style={styles.main} />
     )
   }
 }

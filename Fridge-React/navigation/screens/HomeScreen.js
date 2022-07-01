@@ -14,41 +14,65 @@ import { initializeApp } from 'firebase/app'
 export default function HomeScreen({navigation}) {
 
 
-  const [fridge, setFridge] = React.useState([])
+  //States for dropdown selector
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState('all');
+  const [items, setItems] = React.useState([
+  {label: 'All', value: 'all'},
+  {label: 'Fridge', value: 'fridge'},
+  {label: 'Freezer', value: 'freezer'},
+  {label: 'Pantry', value: 'pantry'}
+]);
 
+
+  const [display, setDisplay] = React.useState([])
+  const [isLoading, setIsLoading] = React.useState(true)
+  
+  
+  const app = initializeApp(firebaseConfig);
+  
+  const all = []
+  const fridge = []
+  const pantry = []
+  const freezer = []
   
   React.useEffect(() => {
-    
-    const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth();
-    const colRef = collection(db, `${auth.currentUser.uid}/data/fridge`)
-    const items = []
-      
-      getDocs(colRef).then((snapshot) => {
-        snapshot.docs.forEach((doc) => {
-      items.push({...doc.data(), id : doc.id})
-    }).then((items) => {
-       // setFridge(items)
-       console.log(items);
-      }).catch((err) => {
-        console.log(err);
+    const fridgeRef = collection(db, `${auth.currentUser.uid}/data/fridge`)
+    const freezerRef = collection(db, `${auth.currentUser.uid}/data/freezer`)
+    const pantryRef = collection(db, `${auth.currentUser.uid}/data/pantry`)
+    
+    getDocs(fridgeRef).then((snapshot) => {
+      snapshot.docs.forEach((doc) => {
+        all.push({...doc.data(), id : doc.id})
+        fridge.push({...doc.data(), id : doc.id})
       })
-     
+      getDocs(pantryRef).then((snapshot) => {
+        snapshot.docs.forEach((doc) => {
+          all.push({...doc.data(), id : doc.id})
+          pantry.push({...doc.data(), id : doc.id})
+        })
+        getDocs(freezerRef).then((snapshot) => {
+          snapshot.docs.forEach((doc) => {
+            all.push({...doc.data(), id : doc.id})
+            freezer.push({...doc.data(), id : doc.id})
+          })
+          
+          if(value === 'fridge') {
+            setDisplay(fridge)
+          } else if(value === 'freezer') {
+            setDisplay(freezer)
+          } else if (value === 'pantry') {
+            setDisplay(pantry)
+          } else {
+            setDisplay(all)
+          }
     })
-  }, [fridge])
-  
-  console.log(fridge);
-  
-    //States for dropdown selector
-    const [open, setOpen] = React.useState(false);
-    const [value, setValue] = React.useState('all');
-    const [items, setItems] = React.useState([
-    {label: 'All', value: 'all'},
-    {label: 'Fridge', value: 'fridge'},
-    {label: 'Freezer', value: 'freezer'},
-    {label: 'Cupboard', value: 'cupboard'}
-  ]);
+    })
+  })
+
+  }, [value])
 
 
     return (
@@ -78,93 +102,59 @@ export default function HomeScreen({navigation}) {
 />
 
 
- <ScrollView>
- 
-  <Card style={styles.card}>
+ <ScrollView> 
 
-      <CardImage
-        source={{uri: 'https://hips.hearstapps.com/ghk.h-cdn.co/assets/18/09/2048x1024/landscape-1519672422-carrots.jpg?resize=1200:*'}} 
-        title="Carrot"
-        size="2"
-        />
-    
-    <CardAction
-     separator={true}
-     inColumn={false}>
+{display.map((item) => {
 
-    
+return (
+  
+<Card key={item.id} style={styles.card}>
+
+<CardImage
+  source={{uri: `https://spoonacular.com/cdn/ingredients_250x250/${item.itemObj.image}`}} 
+  title={item.itemObj.title}
+  size="2"
+  />
+
+<CardAction
+separator={true}
+inColumn={false}>
+
+
+<CardTitle 
+subtitle={`Stored In: ${item.itemObj.category}`} 
+/>
+
+<Text style={styles.red}>{` days remaining`}</Text>
+
+</CardAction>
+
+<CardAction 
+separator={true} 
+inColumn={false}>
+  
     <CardTitle 
-      subtitle="Stored In: Fridge" 
-      >sss</CardTitle>
-    
-    <Text style={styles.red}>1 Day Remaining</Text>
+  subtitle={item.itemObj.amount}/>
 
-     </CardAction>
+<CardButton
+  onPress={() => {alert('Added to shopping list!')}}
+  title="Add To List"
+  color="#FEB557"
+  />
 
-    <CardAction 
-      separator={true} 
-      inColumn={false}>
-        
-          <CardTitle 
-        subtitle="6"/>
+<CardButton
+  onPress={() => {}}
+  title="Change Quantity"
+  color="#FEB557"
+  />
+  
+</CardAction>
 
-      <CardButton
-        onPress={() => {alert('Added to shopping list!')}}
-        title="Add To List"
-        color="#FEB557"
-        />
+</Card>
 
-      <CardButton
-        onPress={() => {}}
-        title="Change Quantity"
-        color="#FEB557"
-        />
-        
-    </CardAction>
+)
 
-  </Card>
-
-
-  <Card style={styles.card}>
-
-      <CardImage
-        source={{uri: 'https://cdn.shopify.com/s/files/1/2836/2982/products/pic10_large.jpg?v=1529434190'}} 
-        title="Cheddar Cheese"
-        size="2"
-        />
-    
-    <CardAction
-     separator={true}
-     inColumn={false}>
-
-    
-    <CardTitle 
-      subtitle="Stored In: Fridge" 
-      />
-    
-    <Text style={styles.green}>10 Day Remaining</Text>
-
-     </CardAction>
-
-    <CardAction 
-      separator={true} 
-      inColumn={false}>
-          <CardTitle 
-        subtitle="0.5kg" 
-        />
-      <CardButton
-        onPress={() => {alert('Added to shopping list!')}}
-        title="Add To List"
-        color="#FEB557"
-        />
-      <CardButton
-        onPress={() => {}}
-        title="Change Quantity"
-        color="#FEB557"
-        />
-    </CardAction>
-
-  </Card>
+})}
  
 </ScrollView>
         </>

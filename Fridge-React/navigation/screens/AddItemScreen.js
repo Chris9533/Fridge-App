@@ -47,7 +47,7 @@ export default function AddItemScreen({ navigation }) {
     if (searchTerm.length > 0) {
       axios
         .get(
-          `https://api.spoonacular.com/food/ingredients/search?apiKey=ae8fe14f28d9455ea1809e8c6dc0d936&query=${searchTerm}&number=5`
+          `https://api.spoonacular.com/food/ingredients/search?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&query=${searchTerm}&number=5`
         )
         .then((res) => {
           setSearchResults(res.data.results);
@@ -107,6 +107,7 @@ export default function AddItemScreen({ navigation }) {
             onChangeText={(text) => setSearchTerm(text)}
             onSearchPress={() => handleSearch()}
             onClearPress={() => setSearchTerm("")}
+            onKeyPress
             //   onPress={() => alert("onPress")}
           />
 
@@ -126,12 +127,12 @@ export default function AddItemScreen({ navigation }) {
                       
                         <Text style={styles.title}>
                             
-                              {item.name.charAt(0).toUpperCase() + item.name.slice(1)}
+                              {item.name}
                             
                           </Text>
 
                       <CardAction separator={true} inColumn={false}>
-                        <Text>Expirey Date:</Text>
+                        <Text>     Expiry Date:</Text>
                         <DateField
                           defaultValue={new Date()}
                           styleInput={{ fontSize: 15 }}
@@ -219,8 +220,8 @@ export default function AddItemScreen({ navigation }) {
                                 callback: () => Popup.hide(),
                               });
                             } else if (
-                              selectWeight === "" &&
-                              selectQuantity === ""
+                              selectWeight === null &&
+                              selectQuantity === null
                             ) {
                               Popup.show({
                                 type: "Warning",

@@ -1,9 +1,15 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+
+    main: {
+      backgroundColor: 'black',
+    },
+
     card: {
       borderRadius: 25,
-      marginBottom: '3%'
+      marginBottom: '3%',
+      // backgroundColor: '',
     },
     container: {
       display: 'grid',
@@ -23,16 +29,19 @@ export const styles = StyleSheet.create({
       // height: 80,
       resizeMode: 'contain',
       border: 'solid black 2px',
-      color: 'black',
+      // color: 'black',
+      // marginTop: '5%',
+      padding: '2%',
 
     },
     buttons: {
       display: 'flex',
       alignContent: 'center',
-      backgroundColor: 'black',
+      // backgroundColor: 'green',
       color: '',
       marginLeft: '38%',
       marginBottom: '3%',
+      
       
     },
     search: {
@@ -45,6 +54,9 @@ export const styles = StyleSheet.create({
     title: {
       fontSize: 35,
       marginBottom: 5,
+      textTransform: 'capitalize',
+      fontStyle: 'italic',
+      color: 'orange',
     }
 
   });
