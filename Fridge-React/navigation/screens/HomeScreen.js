@@ -1,15 +1,17 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity} from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, RefreshControl} from 'react-native';
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'
 import SearchBar from "react-native-dynamic-search-bar";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { styles } from '../../stylesheet';
-import { getFirestore, getDocs, collection } from 'firebase/firestore';
+import { getFirestore, getDocs, collection, waitForPendingWrites } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { firebaseConfig } from '../../firebase';
 import { initializeApp } from 'firebase/app' 
 
-
+const wait = (timeout) => {
+  return new Promise(resolve => setTimeout(resolve, timeout));
+}
 
 export default function HomeScreen({navigation}) {
 
@@ -27,7 +29,12 @@ export default function HomeScreen({navigation}) {
 
   const [display, setDisplay] = React.useState([])
   const [isLoading, setIsLoading] = React.useState(true)
-  
+  const [refreshing, setRefreshing] = React.useState(false)
+
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true)
+    wait(2000).then(() => setRefreshing(false))
+  })
   
   const app = initializeApp(firebaseConfig);
   
@@ -72,7 +79,7 @@ export default function HomeScreen({navigation}) {
     })
   })
 
-  }, [value])
+  }, [value, refreshing])
 
 
     return (
@@ -102,7 +109,12 @@ export default function HomeScreen({navigation}) {
 />
 
 
- <ScrollView> 
+ <ScrollView refreshControl={
+   <RefreshControl
+   refreshing={refreshing}
+   onRefresh={onRefresh}
+   />
+ }> 
 
 {display.map((item) => {
 
