@@ -47,7 +47,7 @@ export default function AddItemScreen({ navigation }) {
     if (searchTerm.length > 0) {
       axios
         .get(
-          `https://api.spoonacular.com/food/ingredients/search?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&query=${searchTerm}&number=5`
+          `https://api.spoonacular.com/food/ingredients/search?apiKey=39f4abc5175f4647aff9f73a69ec58d6&query=${searchTerm}&number=5`
         )
         .then((res) => {
           setSearchResults(res.data.results);

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Touchable, TouchableOpacity } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, getDocs, collection, setDoc, doc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -8,6 +8,8 @@ import moment from 'moment';
 import axios from 'axios';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, CardImage, CardButton } from 'react-native-cards';
+import { Root, Popup } from "popup-ui";
+
 
 export default function RecipesScreen({navigation}) {
         
@@ -26,7 +28,7 @@ export default function RecipesScreen({navigation}) {
     React.useEffect(() => {
        
 
-        const ingredientsArr = []
+        let ingredientsArr = []
         let ingredientsStr = ''
         const recipeArr = []
        
@@ -65,7 +67,7 @@ export default function RecipesScreen({navigation}) {
             }
                 })
 
-        axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&ingredients=${ingredientsStr}&number=5`)
+        axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=39f4abc5175f4647aff9f73a69ec58d6&ingredients=${ingredientsStr}&number=5`)
             .then(res => {
                 res.data.forEach(recipe => {
                     recipeArr.push({title: recipe.title, img: recipe.image, ingTotal: recipe.usedIngredientCount + recipe.missedIngredientCount, ingUsedCount: recipe.usedIngredientCount, ingMatch: recipe.usedIngredients.map(recipe => {return recipe.name}),ingMissing: recipe.missedIngredients.map(recipe => {return recipe.name}), id: recipe.id}) 
@@ -82,7 +84,7 @@ export default function RecipesScreen({navigation}) {
         setRecipeIsLoading(true)
         setSelectRecipe(curr => !curr)
         setRecipeId(id)
-        axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&includeNutrition=false`)
+        axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=39f4abc5175f4647aff9f73a69ec58d6&includeNutrition=false`)
         .then(res => {
             setRecipeData({source: res.data.sourceUrl, veggie: res.data.vegetarian})
             setRecipeIsLoading(false)
@@ -96,7 +98,7 @@ export default function RecipesScreen({navigation}) {
     const handleShoppingPress = (ingList) => {
         ingList.forEach(item => {
            const itemObj = {title: item}
-            setDoc(doc(db, auth.currentUser.uid, 'data', 'Shopiing List', item), {itemObj})
+            setDoc(doc(db, auth.currentUser.uid, 'data', 'Shopping List', item), {itemObj})
             .catch((error) => {
                 const errorCode = error.code;
                 const errorMessage = error.message;
@@ -107,6 +109,8 @@ export default function RecipesScreen({navigation}) {
 
     if(isLoading){return <Text>Loading</Text>}
     return (
+            <Root>
+        <View>
         <ScrollView>
             {recipeList && recipeList.map(recipe => {
                 return (
@@ -130,7 +134,17 @@ export default function RecipesScreen({navigation}) {
                         <Text>{'Veggie?'}</Text>
                         {recipeIsLoading ? <Text>'Loading...'</Text> : <Text>{recipeData.veggie.toString()}</Text>}
                         <CardButton title='Yum' onPress={handleYum}/>
-                        <CardButton title='Add Missing to List' onPress={() => {handleShoppingPress(recipe.ingMissing)}}/>
+                        <TouchableOpacity>
+                        <CardButton title='Add Missing to List' onPress={() => {handleShoppingPress(recipe.ingMissing); Popup.show({
+                                type: "Success",
+                                title:
+                                  "Missing items have been added to your shopping list ",
+                                button: true,
+                                textBody: ``,
+                                buttonText: "Dismiss",
+                                callback: () => Popup.hide(),
+                              }); }}/>
+                        </TouchableOpacity>
                         </>
                         : 
                         <></>}
@@ -139,5 +153,7 @@ export default function RecipesScreen({navigation}) {
                 )
             })}
         </ScrollView>
+            </View>
+            </Root>
     )
 }
