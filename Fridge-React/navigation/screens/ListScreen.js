@@ -51,6 +51,7 @@ export default function ListScreen({navigation}) {
         setDeleteItem((currentVal) => {return !currentVal})
        })
 
+
     }
 
 
