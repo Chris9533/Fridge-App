@@ -9,6 +9,8 @@ import { getAuth } from 'firebase/auth';
 import { firebaseConfig } from '../../firebase';
 import { initializeApp } from 'firebase/app'
 import { Root, Popup } from "popup-ui"; 
+import { NativeBaseProvider, Box, AspectRatio, Image, Center, Stack, HStack, Heading, VStack, Button, Input } from "native-base";
+
 
 const wait = (timeout) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
@@ -181,94 +183,98 @@ const handleSwitch = (id) => {
 {display.map((item) => {
 
 return (
-  
-<Card key={item.id} style={styles.card}>
 
-<CardImage
-  style={styles.img}
-  source={{uri: `https://spoonacular.com/cdn/ingredients_250x250/${item.itemObj.image}`}} 
-  />
-
-<Text style={styles.title}>
-{`[ ${item.itemObj.title} ]`}
-</Text>
-
-<CardAction
-separator={true}
-inColumn={false}>
+  <>
 
 
+<NativeBaseProvider>
+            
+           
+            <Box alignItems="center">
+      <Box marginBottom="3%" maxW="80" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
+      borderColor: "coolGray.600",
+      backgroundColor: "gray.700"
+    }} _web={{
+      shadow: 2,
+      borderWidth: 0
+    }} _light={{
+      backgroundColor: "gray.50"
+    }}>
+        <Box>
+          <AspectRatio w="100%" ratio={16 / 9}>
+            <Image source={{
+            uri: `https://spoonacular.com/cdn/ingredients_250x250/${item.itemObj.image}`
+          }} alt="image" />
+          </AspectRatio>
+          <Center bg="green.500" _dark={{
+          bg: "green.200"
+        }} _text={{
+          color: "warmGray.50",
+          fontWeight: "700",
+          fontSize: "xs",
+          textTransform: "capitalize"
+        }} position="absolute" bottom="0" px="3" py="1.5">
+            {`Stored In: ${item.itemObj.category}`}
+          </Center>
+        </Box>
+        <Stack p="4" space={3}>
+          <Stack space={2} alignItems="center">
+            <Heading size="md" ml="-1" textTransform={'capitalize'}>
+             {`${item.itemObj.title}`}
+            </Heading>
+            <Text fontSize="xs" _light={{
+            color: "violet.500"
+          }} _dark={{
+            color: "violet.400"
+          }} fontWeight="500" ml="-0.5" mt="-1">
+              {`${item.itemObj.amount} In Stock`}
+            </Text>
+          </Stack>
 
-<CardTitle subtitle={`Stored In: ${item.itemObj.category}`} />
-
-<Text style={styles.red}>{`2 days remaining`}</Text>
-
-</CardAction>
-
-<CardAction 
-separator={true} 
-inColumn={false}>
-  
-    <CardTitle
-  subtitle={`${item.itemObj.amount} In Stock`}/>
-
-
-<TouchableOpacity>
-<CardButton
-  title="Add To List"
-  color="white"
-  onPress={() => {handleShoppingPress(item.itemObj.title); Popup.show({
-    type: "Success",
-    title:
-      `${item.itemObj.title} have been added to your shopping list`,
-    button: true,
-    textBody: ``,
-    buttonText: "Dismiss",
-    callback: () => Popup.hide(),
-  });}}
-  />
-  </TouchableOpacity>
-
-  <CardButton title= "Update Quantity" onPress={() => {handleSwitch(item.itemObj.title)}}/>
-  
-</CardAction>
-  {selectItem && itemId === item.itemObj.title ? 
+          <Stack mb="2.5" mt="1.5" direction={{
+        base: "column",
+        md: "row"
+      }} space={2} mx={{
+        base: "auto",
+        md: "0"
+      }}>
+          <Button size="sm" variant="solid" colorScheme="green"
+          onPress={() => {handleShoppingPress(item.itemObj.title); Popup.show({
+            type: "Success",
+            title:
+              `${item.itemObj.title} have been added to your shopping list`,
+            button: true,
+            textBody: ``,
+            buttonText: "Dismiss",
+            callback: () => Popup.hide(),
+          });}}>
+            ADD TO LIST
+          </Button>
+          <Button size="sm" variant="solid" colorScheme="primary"
+          onPress={() => {handleSwitch(item.itemObj.title)}}>
+            CHANGE QUANTITY
+          </Button>
+          {selectItem && itemId === item.itemObj.title ? 
                         <>
                         <CardAction separator={true} inColumn={false}>
-                        <TextInput
-                        style={{
-                          height: 40,
-                          marginTop: 15,
-                          backgroundColor: "white",
-                          borderRadius: 10,
-                          borderWidth: 1,
-                          borderColor: "grey",
-                          padding: 10,
-                          fontSize: 20,
-                        }}
-                        placeholder="Input Amount"
-                        onChangeText={(newText) => {
-                          setAmount(newText);
-                        }}
-                      />
-                      <CardButton
-                          title="Weight (grams)"
-                          color="white"
+                    
+                      <Input variant="rounded" mx="3" placeholder="Amount" w="30%" maxWidth="100px" />
+                      <Button
+                          variant="outline"
                           onPress={() => {
                             weightSelected();
                           }}
-                        />
-                        <CardButton
-                          color="white"
-                          title="Quantity"
+                        >Grams</Button>
+                        <Button
+                          variant="outline"
                           onPress={() => {
                             quantitySelected();
                           }}
-                        /></CardAction> 
-                        <CardAction separator={true} inColumn={false}> 
-                        <CardButton
-                        color="white"
-                        title="Update"
+                        >Quantity</Button>
+                        </CardAction> 
+                        
+                        <Button size="sm" colorScheme="green"
+
                         onPress={() => {
                           if (selectWeight === null &&
                             selectQuantity === null) {
@@ -294,10 +300,8 @@ inColumn={false}>
                               });
                             }
                         }}
-                      />
-                      <CardButton
-                          color="white"
-                          title="Delete Item"
+                      >UPDATE</Button>
+                      <Button size="sm" colorScheme="red"
                           onPress={() => {
                             removeItem(item.itemObj.title, item.itemObj.category); Popup.show({
                               type: "Success",
@@ -309,12 +313,29 @@ inColumn={false}>
                               callback: () => Popup.hide(),
                             });
                           }}
-                        />
-                        </CardAction>
+                        >DELETE</Button>
+                       
                       </> : <></>}
+        </Stack>
 
-</Card>
 
+          <HStack alignItems="center" space={4} justifyContent="space-between">
+            <HStack alignItems="center">
+              <Text color="coolGray.600" _dark={{
+              color: "warmGray.200"
+            }} fontWeight="400">
+                2 days remaining
+              </Text>
+            </HStack>
+          </HStack>
+        </Stack>
+      </Box>
+    </Box>
+
+            
+    </NativeBaseProvider>
+
+ </>
 )
 
 })}
