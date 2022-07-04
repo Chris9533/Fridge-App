@@ -34,13 +34,13 @@ export default function ListScreen({navigation}) {
 
     const handleRemove = (name) => {
 
-       await db.collection(`${auth.currentUser.uid}/data/Shopping List`).doc(name).delete()
-        .then(() => {
+    //    await db.collection(`${auth.currentUser.uid}/data/Shopping List`).doc(name).delete()
+    //     .then(() => {
 
-        }).catch((err) => {
-            console.log(err)
+    //     }).catch((err) => {
+    //         console.log(err)
 
-        })
+    //     })
 
     }
 

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, Touchable, TouchableOpacity } from 'react-native';
+import { View, Text, RefreshControl, ActivityIndicator } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -8,15 +8,18 @@ import moment from 'moment';
 import axios from 'axios';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, CardImage, CardButton } from 'react-native-cards';
-import { Root, Popup } from "popup-ui";
 
-
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
+  
 export default function RecipesScreen({navigation}) {
         
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
     const auth = getAuth();
 
+    const [refreshing, setRefreshing] = React.useState(false)
     const [recipeList, setRecipeList] = React.useState([])
     const [isLoading, setIsLoading] = React.useState(true)
     const [recipeIsLoading, setRecipeIsLoading] = React.useState(true)
@@ -24,20 +27,27 @@ export default function RecipesScreen({navigation}) {
     const [recipeId, setRecipeId] = React.useState('')
     const [recipeData, setRecipeData] = React.useState()
     const [firebaseData, setFirebaseData] = React.useState([])
+    const [favourites, setFavourites] = React.useState([])
+    const [optFav, setOptFav] = React.useState([])
    
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true)
+        wait(2000).then(() => setRefreshing(false))
+      })    
 
     React.useEffect(() => {
        
 
-         let ingredientsArr = []
-
+        let ingredientsArr = [] 
         let ingredientsStr = ''
         const recipeArr = []
+        let favouriteArr = []
        
 
         const colRefFridge = collection(db, `${auth.currentUser.uid}/data/fridge`)
         const colRefPantry = collection(db,`${auth.currentUser.uid}/data/pantry` )
         const colRefFreezer = collection(db, `${auth.currentUser.uid}/data/freezer`)
+        const colRefFavourite = collection(db, `${auth.currentUser.uid}/data/Favourites`)
         getDocs(colRefFridge)
         .then((snapshot) => {
             snapshot.docs.forEach((doc) => {
@@ -71,7 +81,7 @@ export default function RecipesScreen({navigation}) {
             }
                 })
 
-        axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=39f4abc5175f4647aff9f73a69ec58d6&ingredients=${ingredientsStr}&number=5`)
+        axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=ae8fe14f28d9455ea1809e8c6dc0d936&ingredients=${ingredientsStr}&number=5`)
             .then(res => {
                 res.data.forEach(recipe => {
                     recipeArr.push({title: recipe.title, img: recipe.image, ingTotal: recipe.usedIngredientCount + recipe.missedIngredientCount, ingUsedCount: recipe.usedIngredientCount, ingMatch: recipe.usedIngredients.map(recipe => {return recipe.name}),ingMissing: recipe.missedIngredients.map(recipe => {return recipe.name}), id: recipe.id}) 
@@ -79,32 +89,39 @@ export default function RecipesScreen({navigation}) {
                 setRecipeList(recipeArr)
             setIsLoading(false)
             })
+        getDocs(colRefFavourite)
+        .then(snapshot => {
+            snapshot.docs.forEach(doc => {
+                favouriteArr.push(doc.data().favObj.title)
+            })
+            setFavourites(favouriteArr)
+        })
         })
         })
         })  
-    }, [])
+    }, [refreshing])
 
     const handleSwitch = (id) => {
         setRecipeIsLoading(true)
         setSelectRecipe(curr => !curr)
         setRecipeId(id)
-        axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=39f4abc5175f4647aff9f73a69ec58d6&includeNutrition=false`)
+        axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=ae8fe14f28d9455ea1809e8c6dc0d936&includeNutrition=false`)
         .then(res => {
             setRecipeData({source: res.data.sourceUrl, veggie: res.data.vegetarian, fullIng: res.data.extendedIngredients})
             setRecipeIsLoading(false)
         })
     }
 
-    const handleYum = (ingObj) => {
+    const handleYum = (ingObj, title, source, img) => {
         const firebaseIng = []
         const firebaseComp = []
         const firebaseCategory = []
         firebaseData.forEach(item => {
-            firebaseCategory.push({title: item.id, category: item.itemObj.category})
+            firebaseCategory.push({title: item.id, category: item.itemObj.category, amount: item.itemObj.amount})
             firebaseComp.push(item.id)
         })
         ingObj.forEach(ing => {
-            firebaseIng.push({title: ing.name, amount: ing.amount})
+            firebaseIng.push({title: ing.name, amount: Math.floor(ing.measures.metric.amount)})
         })
         const filteredIng = firebaseIng.filter(item => {
             return firebaseComp.includes(item.title)
@@ -113,12 +130,28 @@ export default function RecipesScreen({navigation}) {
           firebaseCategory.forEach(obj => {
                 if(item.title === obj.title) {
                    item.category = obj.category
-                }
+                   if(obj.amount.length > 1) {
+                      obj.amount.slice(-1) === 'g' ? item.amount = (+obj.amount.slice(0,-1) - item.amount).toString() + 'g': item.amount = (+obj.amount - item.amount).toString()  
+                   } else {
+                       item.amount = (+obj.amount - item.amount).toString()
+                   }
+                 
+                }  
             })
         })
+        console.log(filteredIng)
         filteredIng.forEach(item => {
-            updateDoc(doc(db, auth.currentUser.uid, 'data', item.category, item.title), {'itemObj.amount': increment(-item.amount)})
+            updateDoc(doc(db, auth.currentUser.uid, 'data', item.category, item.title), {'itemObj.amount': item.amount})
         })
+
+        const historyObj = {title: title, source: source, img: img, date: Date.now()}
+        setDoc(doc(db, auth.currentUser.uid, 'data', 'History', title), {historyObj})
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode);
+          });
+        
     }
 
     const handleShoppingPress = (ingList) => {
@@ -133,11 +166,25 @@ export default function RecipesScreen({navigation}) {
         })
     }
 
-    if(isLoading){return <Text>Loading</Text>}
+    const handleFavourite = (title, source, img) => {
+        const favObj = {title: title, source: source, img: img}
+        setDoc(doc(db, auth.currentUser.uid, 'data', 'Favourites', title), {favObj})
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode);
+          });
+        setOptFav(oldArray => [...oldArray, title])
+    }
+
+    if(isLoading)<ActivityIndicator />
     return (
-            <Root>
-        <View>
-        <ScrollView>
+        <ScrollView refreshControl={
+            <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            />
+          }> 
             {recipeList && recipeList.map(recipe => {
                 return (
                     <Card key={recipe.id}>
@@ -156,25 +203,15 @@ export default function RecipesScreen({navigation}) {
                             return <Text key={name}>{name}</Text>
                         })}
                         <Text>{'Instructions'}</Text>
-                        {recipeIsLoading ? <Text>'Loading...'</Text> : <Text>{recipeData.source}</Text>}
+                        {recipeIsLoading ? <ActivityIndicator /> : <Text style={{color: 'blue'}}
+                            onPress={() => Linking.openURL(recipe.source)}>
+                        Click Here
+                        </Text>}
                         <Text>{'Veggie?'}</Text>
-                        {recipeIsLoading ? <Text>'Loading...'</Text> : <Text>{recipeData.veggie.toString()}</Text>}
-                        <CardButton title='Yum' onPress={() => {handleYum(recipeData.fullIng)}}/>
-                        <TouchableOpacity>
-                        <CardButton title='Add Missing to List' onPress={() => {handleShoppingPress(recipe.ingMissing); Popup.show({
-                                type: "Success",
-                                title:
-                                  "Missing items have been added to your shopping list ",
-                                button: true,
-                                textBody: ``,
-                                buttonText: "Dismiss",
-                                callback: () => Popup.hide(),
-                              }); }}/>
-                        </TouchableOpacity>
-
-                      
-          
-
+                        {recipeIsLoading ? <ActivityIndicator /> : <Text>{recipeData.veggie.toString()}</Text>}
+                        <CardButton title='Yum' onPress={() => {handleYum(recipeData.fullIng, recipe.title, recipeData.source, recipe.img)}}/>
+                        <CardButton title='Add Missing to List' onPress={() => {handleShoppingPress(recipe.ingMissing)}}/>
+                        {favourites.includes(recipe.title) || optFav.includes(recipe.title) ? <Text>Favourited</Text> : <CardButton title='Favourite' onPress={()=> {handleFavourite(recipe.title, recipeData.source, recipe.img)}}/>}
                         </>
                         : 
                         <></>}
@@ -183,7 +220,5 @@ export default function RecipesScreen({navigation}) {
                 )
             })}
         </ScrollView>
-            </View>
-            </Root>
     )
 }

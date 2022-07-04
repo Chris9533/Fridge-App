@@ -62,7 +62,7 @@ export const styles = StyleSheet.create({
       marginLeft: 10,
       textTransform: 'capitalize',
       fontStyle: 'italic',
-      fontFamily: 'Futura-Medium', 
+      // fontFamily: 'Futura-Medium', 
       color: '#132257',
       opacity: 1,
       
