@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, Touchable, TouchableOpacity } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -8,6 +8,8 @@ import moment from 'moment';
 import axios from 'axios';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, CardImage, CardButton } from 'react-native-cards';
+import { Root, Popup } from "popup-ui";
+
 
 export default function RecipesScreen({navigation}) {
         
@@ -28,6 +30,7 @@ export default function RecipesScreen({navigation}) {
        
 
          let ingredientsArr = []
+
         let ingredientsStr = ''
         const recipeArr = []
        
@@ -132,6 +135,8 @@ export default function RecipesScreen({navigation}) {
 
     if(isLoading){return <Text>Loading</Text>}
     return (
+            <Root>
+        <View>
         <ScrollView>
             {recipeList && recipeList.map(recipe => {
                 return (
@@ -155,7 +160,21 @@ export default function RecipesScreen({navigation}) {
                         <Text>{'Veggie?'}</Text>
                         {recipeIsLoading ? <Text>'Loading...'</Text> : <Text>{recipeData.veggie.toString()}</Text>}
                         <CardButton title='Yum' onPress={() => {handleYum(recipeData.fullIng)}}/>
-                        <CardButton title='Add Missing to List' onPress={() => {handleShoppingPress(recipe.ingMissing)}}/>
+                        <TouchableOpacity>
+                        <CardButton title='Add Missing to List' onPress={() => {handleShoppingPress(recipe.ingMissing); Popup.show({
+                                type: "Success",
+                                title:
+                                  "Missing items have been added to your shopping list ",
+                                button: true,
+                                textBody: ``,
+                                buttonText: "Dismiss",
+                                callback: () => Popup.hide(),
+                              }); }}/>
+                        </TouchableOpacity>
+
+                      
+          
+
                         </>
                         : 
                         <></>}
@@ -164,5 +183,7 @@ export default function RecipesScreen({navigation}) {
                 )
             })}
         </ScrollView>
+            </View>
+            </Root>
     )
 }
