@@ -41,13 +41,12 @@ export default function AddItemScreen({ navigation }) {
   const [selectWeight, setSelectWeight] = React.useState(null);
   const [selectQuantity, setSelectQuantity] = React.useState(null);
 
-  console.log(selectQuantity, selectWeight, value);
 
   const handleSearch = () => {
     if (searchTerm.length > 0) {
       axios
         .get(
-          `https://api.spoonacular.com/food/ingredients/search?apiKey=39f4abc5175f4647aff9f73a69ec58d6&query=${searchTerm}&number=5`
+          `https://api.spoonacular.com/food/ingredients/search?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&query=${searchTerm}&number=5`
         )
         .then((res) => {
           setSearchResults(res.data.results);
@@ -58,13 +57,13 @@ export default function AddItemScreen({ navigation }) {
   const weightSelected = () => {
     setSelectWeight(amount + "g");
     setSelectQuantity("");
-    console.log(selectWeight);
+ 
   };
 
   const quantitySelected = () => {
     setSelectQuantity(amount);
     setSelectWeight("");
-    console.log(selectQuantity);
+    
   };
   const addItemFirebase = (name, image) => {
     const app = initializeApp(firebaseConfig);

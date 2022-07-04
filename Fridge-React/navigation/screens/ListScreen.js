@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text } from 'react-native';
+import { View, Text, RefreshControl } from 'react-native';
 import { getFirestore, getDocs, collection, Firestore, doc, deleteDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { initializeApp } from 'firebase/app'
@@ -8,14 +8,24 @@ import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 
 import { ScrollView } from 'react-native-gesture-handler';
 import { styles } from '../../stylesheet'; 
 
+const wait = (timeout) => {
+    return new Promise(resolve => setTimeout(resolve, timeout));
+  }
+
 export default function ListScreen({navigation}) {
 
     const app = initializeApp(firebaseConfig);
     const [display, setDisplay] = React.useState([])
     const [deleteItem, setDeleteItem] = React.useState(true)
+    const [refreshing, setRefreshing] = React.useState(false)
     const db = getFirestore(app);
     const auth = getAuth();
     const shoppingList = []
+
+    const onRefresh = React.useCallback(() => {
+        setRefreshing(true)
+        wait(2000).then(() => setRefreshing(false))
+      })
 
     
     React.useEffect(() => {
@@ -32,7 +42,7 @@ export default function ListScreen({navigation}) {
             console.log(err)
         })
 
-    }, [deleteItem])
+    }, [deleteItem, refreshing])
 
     const handleRemove = async (name) => {
 
@@ -46,7 +56,12 @@ export default function ListScreen({navigation}) {
 
     return (
         <>
-        <ScrollView>
+        <ScrollView refreshControl={
+   <RefreshControl
+   refreshing={refreshing}
+   onRefresh={onRefresh}
+   />
+ }> 
        {display.map((item) => {
            console.log(item.itemObj, "here")
         return (
