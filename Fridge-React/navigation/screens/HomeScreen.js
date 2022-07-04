@@ -258,7 +258,9 @@ return (
                         <>
                         <CardAction separator={true} inColumn={false}>
                     
-                      <Input variant="rounded" mx="3" placeholder="Amount" w="30%" maxWidth="100px" />
+                      <Input variant="rounded" mx="3" placeholder="Amount" w="30%" maxWidth="100px" onChangeText={(newText) => {
+                            setAmount(newText);
+                          }} />
                       <Button
                           variant="outline"
                           onPress={() => {
