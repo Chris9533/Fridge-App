@@ -14,7 +14,7 @@ import AddItemScreen from './screens/AddItemScreen';
 //Screen Names
 const homeName = 'Home'
 const profileName = 'Profile'
-const listName = 'List'
+const listName = 'Shopping List'
 const recipesName = 'Recipes'
 const addItemName = 'Add Item'
 

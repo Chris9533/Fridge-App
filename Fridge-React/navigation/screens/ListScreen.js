@@ -1,16 +1,18 @@
 import * as React from 'react';
 import { View, Text } from 'react-native';
-import { getFirestore, getDocs, collection } from 'firebase/firestore';
+import { getFirestore, getDocs, collection, Firestore, doc, deleteDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { initializeApp } from 'firebase/app'
 import { firebaseConfig } from '../../firebase';
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'
+import { ScrollView } from 'react-native-gesture-handler';
 import { styles } from '../../stylesheet'; 
 
 export default function ListScreen({navigation}) {
 
     const app = initializeApp(firebaseConfig);
     const [display, setDisplay] = React.useState([])
+    const [deleteItem, setDeleteItem] = React.useState(true)
     const db = getFirestore(app);
     const auth = getAuth();
     const shoppingList = []
@@ -30,23 +32,21 @@ export default function ListScreen({navigation}) {
             console.log(err)
         })
 
-    }, [])
+    }, [deleteItem])
 
-    const handleRemove = (name) => {
+    const handleRemove = async (name) => {
 
-       await db.collection(`${auth.currentUser.uid}/data/Shopping List`).doc(name).delete()
-        .then(() => {
-
-        }).catch((err) => {
-            console.log(err)
-
-        })
+       const docRef = doc(db, `${auth.currentUser.uid}/data/Shopping List`, name);
+       await deleteDoc(docRef).then(() => {
+        setDeleteItem((currentVal) => {return !currentVal})
+       })
 
     }
 
 
     return (
         <>
+        <ScrollView>
        {display.map((item) => {
            console.log(item.itemObj, "here")
         return (
@@ -69,6 +69,7 @@ export default function ListScreen({navigation}) {
 
 
        })}
+       </ScrollView>
         </>
     )
 }
