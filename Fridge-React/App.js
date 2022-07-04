@@ -14,6 +14,7 @@ import { styles } from './stylesheet';
 
 
 
+
 function App() {
 
   const app = initializeApp(firebaseConfig);
@@ -41,13 +42,12 @@ onAuthStateChanged(auth, (user) => {
   }
 });
 
-
-
   
   
   if (!userLoggedIn) {
   return (
     <>
+    
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen 

@@ -8,6 +8,7 @@ import { getFirestore, getDocs, collection, waitForPendingWrites } from 'firebas
 import { getAuth } from 'firebase/auth';
 import { firebaseConfig } from '../../firebase';
 import { initializeApp } from 'firebase/app' 
+import { NativeBaseProvider, Box, AspectRatio, Image, Center, Stack, HStack, Heading, VStack, Button } from "native-base";
 
 const wait = (timeout) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
@@ -119,52 +120,83 @@ export default function HomeScreen({navigation}) {
 {display.map((item) => {
 
 return (
-  
-<Card key={item.id} style={styles.card}>
-
-<CardImage
-  style={styles.img}
-  source={{uri: `https://spoonacular.com/cdn/ingredients_250x250/${item.itemObj.image}`}} 
-  />
-
-<Text style={styles.title}>
-{`[ ${item.itemObj.title} ]`}
-</Text>
-
-<CardAction
-separator={true}
-inColumn={false}>
 
 
+  <NativeBaseProvider>
+            
+           
+            <Box alignItems="center">
+      <Box marginBottom="3%" maxW="80" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
+      borderColor: "coolGray.600",
+      backgroundColor: "gray.700"
+    }} _web={{
+      shadow: 2,
+      borderWidth: 0
+    }} _light={{
+      backgroundColor: "gray.50"
+    }}>
+        <Box>
+          <AspectRatio w="100%" ratio={16 / 9}>
+            <Image source={{
+            uri: `https://spoonacular.com/cdn/ingredients_250x250/${item.itemObj.image}`
+          }} alt="image" />
+          </AspectRatio>
+          <Center bg="green.500" _dark={{
+          bg: "green.200"
+        }} _text={{
+          color: "warmGray.50",
+          fontWeight: "700",
+          fontSize: "xs",
+          textTransform: "capitalize"
+        }} position="absolute" bottom="0" px="3" py="1.5">
+            {`Stored In: ${item.itemObj.category}`}
+          </Center>
+        </Box>
+        <Stack p="4" space={3}>
+          <Stack space={2} alignItems="center">
+            <Heading size="md" ml="-1" textTransform={'capitalize'}>
+             {`${item.itemObj.title}`}
+            </Heading>
+            <Text fontSize="xs" _light={{
+            color: "violet.500"
+          }} _dark={{
+            color: "violet.400"
+          }} fontWeight="500" ml="-0.5" mt="-1">
+              {`${item.itemObj.amount} In Stock`}
+            </Text>
+          </Stack>
 
-<CardTitle subtitle={`Stored In: ${item.itemObj.category}`} />
+          <Stack mb="2.5" mt="1.5" direction={{
+        base: "column",
+        md: "row"
+      }} space={2} mx={{
+        base: "auto",
+        md: "0"
+      }}>
+          <Button size="sm" variant="solid" colorScheme="secondary">
+            LIST ITEM
+          </Button>
+          <Button size="sm" variant="solid" colorScheme="primary">
+            CHANGE QUANTITY
+          </Button>
+        </Stack>
 
-<Text style={styles.red}>{`2 days remaining`}</Text>
 
-</CardAction>
+          <HStack alignItems="center" space={4} justifyContent="space-between">
+            <HStack alignItems="center">
+              <Text color="coolGray.600" _dark={{
+              color: "warmGray.200"
+            }} fontWeight="400">
+                X days remaining
+              </Text>
+            </HStack>
+          </HStack>
+        </Stack>
+      </Box>
+    </Box>
 
-<CardAction 
-separator={true} 
-inColumn={false}>
-  
-    <CardTitle
-  subtitle={`${item.itemObj.amount} In Stock`}/>
-
-<CardButton
-  onPress={() => {alert('Added to shopping list!')}}
-  title="Add To List"
-  color="white"
-  />
-
-<CardButton
-  onPress={() => {}}
-  title="Change Quantity"
-  color="white"
-  />
-  
-</CardAction>
-
-</Card>
+            
+    </NativeBaseProvider>
 
 )
 
