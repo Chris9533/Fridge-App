@@ -1,19 +1,22 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, RefreshControl} from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, RefreshControl, TextInput} from 'react-native';
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'
 import SearchBar from "react-native-dynamic-search-bar";
 import DropDownPicker from 'react-native-dropdown-picker';
 import { styles } from '../../stylesheet';
-import { getFirestore, getDocs, collection, waitForPendingWrites } from 'firebase/firestore';
+import { getFirestore, getDocs, collection, waitForPendingWrites, setDoc, doc, updateDoc, deleteDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { firebaseConfig } from '../../firebase';
-import { initializeApp } from 'firebase/app' 
+import { initializeApp } from 'firebase/app'
+import { Root, Popup } from "popup-ui"; 
 
 const wait = (timeout) => {
   return new Promise(resolve => setTimeout(resolve, timeout));
 }
 
 export default function HomeScreen({navigation}) {
+
+  
 
 
   //States for dropdown selector
@@ -30,6 +33,13 @@ export default function HomeScreen({navigation}) {
   const [display, setDisplay] = React.useState([])
   const [isLoading, setIsLoading] = React.useState(true)
   const [refreshing, setRefreshing] = React.useState(false)
+  const [selectItem, setSelectItem] = React.useState(false)
+  const [itemId, setItemId] = React.useState('')
+
+  const [selectWeight, setSelectWeight] = React.useState(null);
+  const [selectQuantity, setSelectQuantity] = React.useState(null);
+  const [reload, setReload] = React.useState(false)
+  const [amount, setAmount] = React.useState("");
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true)
@@ -42,10 +52,42 @@ export default function HomeScreen({navigation}) {
   const fridge = []
   const pantry = []
   const freezer = []
+  const db = getFirestore(app);
+  const auth = getAuth();
+
+  const weightSelected = () => {
+    setSelectQuantity(null);
+    setSelectWeight(amount + "g"); 
+  };
+
+  const quantitySelected = () => {
+    setSelectWeight(null);
+    setSelectQuantity(amount);
+  };
+
+  const updateItem = (title, category) => {
+    updateDoc(doc(db, auth.currentUser.uid, 'data', category, title), {'itemObj.amount': selectWeight !== null ? selectWeight : selectQuantity})
+    .then(() => {
+      setSelectItem(curr => !curr)
+      setReload(curr => !curr)
+      setSelectQuantity(null);
+      setSelectWeight(null);
+
+    })
+  }
+
+  const removeItem = async (title, category) => {
+
+    const docRef = doc(db, `${auth.currentUser.uid}/data/${category}`, title);
+       await deleteDoc(docRef).then(() => {
+        setSelectItem(curr => !curr)
+        setReload(curr => !curr)
+        
+       })
+
+  }
   
   React.useEffect(() => {
-    const db = getFirestore(app);
-    const auth = getAuth();
     const fridgeRef = collection(db, `${auth.currentUser.uid}/data/fridge`)
     const freezerRef = collection(db, `${auth.currentUser.uid}/data/freezer`)
     const pantryRef = collection(db, `${auth.currentUser.uid}/data/pantry`)
@@ -79,10 +121,30 @@ export default function HomeScreen({navigation}) {
     })
   })
 
-  }, [value, refreshing])
+  }, [value, refreshing, reload])
+
+  const handleShoppingPress = (name) => {
+   
+       const itemObj = {title: name}
+        setDoc(doc(db, auth.currentUser.uid, 'data', 'Shopping List', name), {itemObj})
+        .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode);
+          });
+    
+}
+
+const handleSwitch = (id) => {
+  setSelectItem(curr => !curr)
+  setItemId(id)
+  
+}
 
 
     return (
+      <Root>
+        <View>
 
         <>
 <DropDownPicker
@@ -150,19 +212,106 @@ inColumn={false}>
     <CardTitle
   subtitle={`${item.itemObj.amount} In Stock`}/>
 
+
+<TouchableOpacity>
 <CardButton
-  onPress={() => {alert('Added to shopping list!')}}
   title="Add To List"
   color="white"
+  onPress={() => {handleShoppingPress(item.itemObj.title); Popup.show({
+    type: "Success",
+    title:
+      `${item.itemObj.title} have been added to your shopping list`,
+    button: true,
+    textBody: ``,
+    buttonText: "Dismiss",
+    callback: () => Popup.hide(),
+  });}}
   />
+  </TouchableOpacity>
 
-<CardButton
-  onPress={() => {}}
-  title="Change Quantity"
-  color="white"
-  />
+  <CardButton title= "Update Quantity" onPress={() => {handleSwitch(item.itemObj.title)}}/>
   
 </CardAction>
+  {selectItem && itemId === item.itemObj.title ? 
+                        <>
+                        <CardAction separator={true} inColumn={false}>
+                        <TextInput
+                        style={{
+                          height: 40,
+                          marginTop: 15,
+                          backgroundColor: "white",
+                          borderRadius: 10,
+                          borderWidth: 1,
+                          borderColor: "grey",
+                          padding: 10,
+                          fontSize: 20,
+                        }}
+                        placeholder="Input Amount"
+                        onChangeText={(newText) => {
+                          setAmount(newText);
+                        }}
+                      />
+                      <CardButton
+                          title="Weight (grams)"
+                          color="white"
+                          onPress={() => {
+                            weightSelected();
+                          }}
+                        />
+                        <CardButton
+                          color="white"
+                          title="Quantity"
+                          onPress={() => {
+                            quantitySelected();
+                          }}
+                        /></CardAction> 
+                        <CardAction separator={true} inColumn={false}> 
+                        <CardButton
+                        color="white"
+                        title="Update"
+                        onPress={() => {
+                          if (selectWeight === null &&
+                            selectQuantity === null) {
+                              Popup.show({
+                                type: "Warning",
+                                title:
+                                  `Please input a weight`,
+                                button: true,
+                                textBody: ``,
+                                buttonText: "Dismiss",
+                                callback: () => Popup.hide(),
+                              });
+                            } else {
+
+                              updateItem(item.itemObj.title, item.itemObj.category); Popup.show({
+                                type: "Success",
+                                title:
+                                  `Qauntity Updated`,
+                                  button: true,
+                                textBody: ``,
+                                buttonText: "Dismiss",
+                                callback: () => Popup.hide(),
+                              });
+                            }
+                        }}
+                      />
+                      <CardButton
+                          color="white"
+                          title="Delete Item"
+                          onPress={() => {
+                            removeItem(item.itemObj.title, item.itemObj.category); Popup.show({
+                              type: "Success",
+                              title:
+                                `${item.itemObj.title} deleted`,
+                                button: true,
+                              textBody: ``,
+                              buttonText: "Dismiss",
+                              callback: () => Popup.hide(),
+                            });
+                          }}
+                        />
+                        </CardAction>
+                      </> : <></>}
 
 </Card>
 
@@ -172,5 +321,7 @@ inColumn={false}>
  
 </ScrollView>
         </>
+        </View>
+        </Root>
     )
 }

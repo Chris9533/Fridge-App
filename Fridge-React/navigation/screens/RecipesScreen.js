@@ -81,6 +81,7 @@ export default function RecipesScreen({navigation}) {
             }
                 })
 
+
         axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=ae8fe14f28d9455ea1809e8c6dc0d936&ingredients=${ingredientsStr}&number=5`)
             .then(res => {
                 res.data.forEach(recipe => {
@@ -105,6 +106,7 @@ export default function RecipesScreen({navigation}) {
         setRecipeIsLoading(true)
         setSelectRecipe(curr => !curr)
         setRecipeId(id)
+
         axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=ae8fe14f28d9455ea1809e8c6dc0d936&includeNutrition=false`)
         .then(res => {
             setRecipeData({source: res.data.sourceUrl, veggie: res.data.vegetarian, fullIng: res.data.extendedIngredients})
