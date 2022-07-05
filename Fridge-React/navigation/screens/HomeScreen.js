@@ -160,6 +160,22 @@ setDisplay(filteredResults)
 
 }
 
+const daysRemaining = (date) => {
+  const milliseconds = date.seconds * 1000
+
+  const daysRemaining = Math.ceil((milliseconds - Date.now()) / 86400000);
+
+
+if (milliseconds - Date.now() < 0) {
+  return "Out of Date"
+} else if (milliseconds - Date.now() < 86400000) {
+  return "Last day to use!"
+} else {
+  return `${daysRemaining} days remaining`
+}
+
+}
+
 if (display.length === 0 ) {
   return (
     <>
@@ -368,7 +384,7 @@ return (
               <Text color="coolGray.600" _dark={{
               color: "warmGray.200"
             }} fontWeight="400">
-                2 days remaining
+                {daysRemaining(item.itemObj.expDate)}
               </Text>
             </HStack>
           </HStack>

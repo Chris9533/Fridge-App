@@ -189,7 +189,7 @@ export default function AddItemScreen({ navigation }) {
                         />
 </HStack>
   <CardAction separator={true} inColumn={false}>
-<Radio.Group name="myRadioGroup" accessibilityLabel="favorite number" value={value} onChange={nextValue => {
+{/* <Radio.Group name="myRadioGroup" accessibilityLabel="favorite number" value={value} onChange={nextValue => {
     setValue(nextValue);
   }}>
       <Radio value="one" my={1}
@@ -204,13 +204,15 @@ export default function AddItemScreen({ navigation }) {
       }}>
         Weight(g)
       </Radio>
-       </Radio.Group>
+       </Radio.Group> */}
+       <Button onPress={() => {weightSelected();}}>Weight</Button>
+       <Button onPress={() => {quantitySelected();}}>Quantity</Button>
                        
+       </CardAction>
        <Input mx="3" placeholder="Enter amount" w="55%" maxWidth="200px" onChangeText={(newText) => {
                             setAmount(newText);
                           }} />
                         
-                      </CardAction>
  
 
         <DropDownPicker
