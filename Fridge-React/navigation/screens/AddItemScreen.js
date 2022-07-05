@@ -25,6 +25,7 @@ import SearchBar from "react-native-dynamic-search-bar";
 import { firebaseConfig } from "../../firebase";
 import { Root, Popup } from "popup-ui";
 import { styles } from "../../stylesheet";
+import { NativeBaseProvider, Radio, Select, Box, AspectRatio, Image, Center, Stack, HStack, Heading, VStack, Button, Input } from "native-base";
 
 export default function AddItemScreen({ navigation }) {
   const [searchTerm, setSearchTerm] = React.useState("");
@@ -109,29 +110,71 @@ export default function AddItemScreen({ navigation }) {
             //   onPress={() => alert("onPress")}
           />
 
-          <ScrollView>
+          <ScrollView contentContainerStyle={{paddingBottom: 60}}>
             {searchResults &&
               searchResults.map((item) => {
                 
                 return (
                   <>
-                    <Card style={styles.card} key={item.id}>
-                      <CardImage
-                        source={{
-                          uri: `https://spoonacular.com/cdn/ingredients_250x250/${item.image}`,
-                        }}
-                        style={styles.img}
-                      />
-                      
-                        <Text style={styles.title}>
-                            
-                              {`[ ${item.name} ]`}
-                            
-                          </Text>
+{console.log(item)}
+                  <NativeBaseProvider>
+                
 
-                      <CardAction separator={true} inColumn={false}>
-                        <Text style={styles.white}>                      Expiry Date:       </Text>
-                        <DateField
+                  <Box alignItems="center">
+      <Box marginBottom="3%" maxW="80" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
+      borderColor: "coolGray.600",
+      backgroundColor: "gray.700"
+    }} _web={{
+      shadow: 2,
+      borderWidth: 0
+    }} _light={{
+      backgroundColor: "gray.50"
+    }}>
+        <Box>
+          <AspectRatio w="100%" ratio={16 / 9}>
+            <Image source={{
+            uri: `https://spoonacular.com/cdn/ingredients_250x250/${item.image}`
+          }} alt="image" />
+          </AspectRatio>
+          <Center bg="green.500" _dark={{
+          bg: "green.200"
+        }} _text={{
+          color: "warmGray.50",
+          fontWeight: "700",
+          fontSize: "xs",
+          textTransform: "capitalize"
+        }} position="absolute" bottom="0" px="3" py="1.5">
+            {item.id}
+          </Center>
+        </Box>
+        <Stack p="4" space={3}>
+          <Stack space={2} alignItems="center">
+            <Heading size="md" ml="-1" textTransform={'capitalize'}>
+             {`${item.name}`}
+            </Heading>
+            
+          </Stack>
+
+          <Stack mb="2.5" mt="1.5" direction={{
+        base: "column",
+        md: "row"
+      }} space={2} mx={{
+        base: "auto",
+        md: "0"
+      }}>
+
+
+<HStack alignItems="center" space={4} justifyContent="space-between">
+           
+              <Text color="coolGray.600" _dark={{
+              color: "warmGray.200"
+            }} fontWeight="400">
+                Expiry Date:
+              </Text>
+            
+          
+
+<DateField
                           defaultValue={new Date()}
                           styleInput={{ fontSize: 15 }}
                           containerStyle={{
@@ -144,46 +187,33 @@ export default function AddItemScreen({ navigation }) {
                           }}
                           onSubmit={(value) => setDate(value)}
                         />
-                      </CardAction>
-
-
-                      <CardAction separator={true} inColumn={false}>
-                        <TextInput
-                          style={{
-                            height: 40,
-                            marginTop: 15,
-                            backgroundColor: "white",
-                            borderRadius: 10,
-                            borderWidth: 1,
-                            borderColor: "grey",
-                            padding: 10,
-                            fontSize: 20,
-                          }}
-                          placeholder="Input Amount"
-                          onChangeText={(newText) => {
+</HStack>
+  <CardAction separator={true} inColumn={false}>
+<Radio.Group name="myRadioGroup" accessibilityLabel="favorite number" value={value} onChange={nextValue => {
+    setValue(nextValue);
+  }}>
+      <Radio value="one" my={1}
+      onPress={() => {
+        quantitySelected();
+      }}>
+        Quantity
+      </Radio>
+      <Radio value="two" my={1}
+      onPress={() => {
+        weightSelected();
+      }}>
+        Weight(g)
+      </Radio>
+       </Radio.Group>
+                       
+       <Input mx="3" placeholder="Enter amount" w="55%" maxWidth="200px" onChangeText={(newText) => {
                             setAmount(newText);
-                          }}
-                        />
-
-                        <CardButton
-                        //   style={styles.buttons2}
-                          title="Weight (grams)"
-                          color="white"
-                          onPress={() => {
-                            weightSelected();
-                          }}
-                        />
-                        <CardButton
-                        // style={styles.buttons2}
-                          color="white"
-                          title="Quantity"
-                          onPress={() => {
-                            quantitySelected();
-                          }}
-                        />
+                          }} />
+                        
                       </CardAction>
+ 
 
-                      <DropDownPicker
+        <DropDownPicker
                         style={styles.dropdown}
                         open={open}
                         value={value}
@@ -195,63 +225,66 @@ export default function AddItemScreen({ navigation }) {
                         placeholder="Select a category"
                       />
 
-                      <TouchableOpacity>
-                        <CardButton
-                          style={styles.buttons}
-                          title="Add item"
-                          color={'#132257'}
-                          onPress={() => {
-                            if (
-                              value === "Select category" &&
-                              selectWeight === null &&
-                              selectQuantity === null
-                            ) {
-                              Popup.show({
-                                type: "Warning",
-                                title:
-                                  "Please select a weight or quantity and a category",
-                                button: true,
-                                textBody: ``,
-                                buttonText: "Dismiss",
-                                callback: () => Popup.hide(),
-                              });
-                            } else if (value === "Select category") {
-                              Popup.show({
-                                type: "Warning",
-                                title: "Please select a Category",
-                                button: true,
-                                textBody: ``,
-                                buttonText: "Dismiss",
-                                callback: () => Popup.hide(),
-                              });
-                            } else if (
-                              selectWeight === null &&
-                              selectQuantity === null
-                            ) {
-                              Popup.show({
-                                type: "Warning",
-                                title: "Please select a  weight or quantity",
-                                button: true,
-                                textBody: ``,
-                                buttonText: "Dismiss",
-                                callback: () => Popup.hide(),
-                              });
-                            } else {
-                              Popup.show({
-                                type: "Success",
-                                title: "Item Added",
-                                button: true,
-                                textBody: `${item.name} has been added to your storage`,
-                                buttonText: "Dismiss",
-                                callback: () => Popup.hide(),
-                              });
-                              addItemFirebase(item.name, item.image);
-                            }
-                          }}
-                        />
-                      </TouchableOpacity>
-                    </Card>
-                  </>
+          <Button size="sm" variant="solid" colorScheme="green"
+          onPress={() => {
+            if (
+              value === "Select category" &&
+              selectWeight === null &&
+              selectQuantity === null
+            ) {
+              Popup.show({
+                type: "Warning",
+                title:
+                  "Please select a weight or quantity and a category",
+                button: true,
+                textBody: ``,
+                buttonText: "Dismiss",
+                callback: () => Popup.hide(),
+              });
+            } else if (value === "Select category") {
+              Popup.show({
+                type: "Warning",
+                title: "Please select a Category",
+                button: true,
+                textBody: ``,
+                buttonText: "Dismiss",
+                callback: () => Popup.hide(),
+              });
+            } else if (
+              selectWeight === null &&
+              selectQuantity === null
+            ) {
+              Popup.show({
+                type: "Warning",
+                title: "Please select a  weight or quantity",
+                button: true,
+                textBody: ``,
+                buttonText: "Dismiss",
+                callback: () => Popup.hide(),
+              });
+            } else {
+              Popup.show({
+                type: "Success",
+                title: "Item Added",
+                button: true,
+                textBody: `${item.name} has been added to your storage`,
+                buttonText: "Dismiss",
+                callback: () => Popup.hide(),
+              });
+              addItemFirebase(item.name, item.image);
+            }
+          }}
+          >
+            ADD ITEM
+          </Button>
+          
+        </Stack>
+        </Stack>
+      </Box>
+    </Box>
+                      
+    </NativeBaseProvider>
+           </>
                 );
               })}
           </ScrollView>
