@@ -23,6 +23,7 @@ export default function HomeScreen({navigation}) {
 
   //States for dropdown selector
   const [open, setOpen] = React.useState(false);
+  const [resetList, setResetList] = React.useState(false);
   const [value, setValue] = React.useState('all');
   const [items, setItems] = React.useState([
   {label: 'All', value: 'all'},
@@ -33,7 +34,7 @@ export default function HomeScreen({navigation}) {
 
 
   const [display, setDisplay] = React.useState([])
-  const [isLoading, setIsLoading] = React.useState(true)
+  const [searchTerm, setSearchTerm] = React.useState("")
   const [refreshing, setRefreshing] = React.useState(false)
   const [selectItem, setSelectItem] = React.useState(false)
   const [itemId, setItemId] = React.useState('')
@@ -123,7 +124,7 @@ export default function HomeScreen({navigation}) {
     })
   })
 
-  }, [value, refreshing, reload])
+  }, [value, refreshing, reload, resetList])
 
   const handleShoppingPress = (name) => {
    
@@ -142,6 +143,47 @@ const handleSwitch = (id) => {
   setItemId(id)
   
 }
+
+
+
+const handleFilter = () => {
+const filteredResults = []
+
+display.forEach((item) => {
+  console.log(item.id)
+  if(item.id == searchTerm) {
+    filteredResults.push(item)
+  }
+  
+})
+setDisplay(filteredResults)
+
+}
+
+if (display.length === 0 ) {
+  return (
+    <>
+    <NativeBaseProvider>
+    <ScrollView refreshControl={
+   <RefreshControl
+   refreshing={refreshing}
+   onRefresh={onRefresh}
+   />
+ }> 
+    <Text>You have no items in storage</Text>
+    <Button
+  onPress={() => {navigation.navigate('Add Item')}}
+  title="Create Account"
+  color="#841584"
+  accessibilityLabel="Create account button"
+>Add Items</Button>
+</ScrollView>
+    </NativeBaseProvider>
+    </>
+  )
+} else {
+
+
 
 
     return (
@@ -166,9 +208,9 @@ const handleSwitch = (id) => {
   cancelIconColor="#c6c6c6"
   backgroundColor="white"
   placeholder="Search for item"
-//   onChangeText={(text) => this.filterList(text)}
-//   onSearchPress={() => console.log("Search Icon is pressed")}
-//   onClearPress={() => this.filterList("")}
+  onChangeText={(text) => setSearchTerm(text)}
+  onSearchPress={() => handleFilter()}
+  onClearPress={() => {setValue("all"); setResetList((curr) => {return !curr})}}
 //   onPress={() => alert("onPress")}
 />
 
@@ -347,4 +389,5 @@ return (
         </View>
         </Root>
     )
+}
 }
