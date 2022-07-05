@@ -164,10 +164,13 @@ const daysRemaining = (date) => {
   const milliseconds = date.seconds * 1000
 
   const daysRemaining = Math.ceil((milliseconds - Date.now()) / 86400000);
+  const outOfDate = Math.floor((milliseconds - Date.now()) / 86400000);
+
+  console.log(outOfDate)
 
 
 if (milliseconds - Date.now() < 0) {
-  return "Out of Date"
+  return `Out of Date by ${outOfDate * -1} day`
 } else if (milliseconds - Date.now() < 86400000) {
   return "Last day to use!"
 } else {
