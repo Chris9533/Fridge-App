@@ -173,7 +173,7 @@ const handleSwitch = (id) => {
 />
 
 
- <ScrollView refreshControl={
+ <ScrollView contentContainerStyle={{paddingBottom: 120}} refreshControl={
    <RefreshControl
    refreshing={refreshing}
    onRefresh={onRefresh}
