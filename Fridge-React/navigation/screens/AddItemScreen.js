@@ -10,15 +10,9 @@ import {
   TextInput,
   View,
   TouchableOpacity,
+  TextInputBase,
 } from "react-native";
-import {
-  Card,
-  CardButton,
-  CardContent,
-  CardImage,
-  CardTitle,
-  CardAction,
-} from "react-native-cards";
+import { CardAction } from "react-native-cards";
 import DateField from "react-native-datefield";
 import DropDownPicker from "react-native-dropdown-picker";
 import SearchBar from "react-native-dynamic-search-bar";
@@ -38,24 +32,29 @@ export default function AddItemScreen({ navigation }) {
     { label: "Freezer", value: "freezer" },
     { label: "Pantry", value: "pantry" },
   ]);
-  const [amount, setAmount] = React.useState("");
+  const [amount, setAmount] = React.useState(0);
   const [selectWeight, setSelectWeight] = React.useState(null);
   const [selectQuantity, setSelectQuantity] = React.useState(null);
+  const [radioValue, setRadioValue] = React.useState("")
 
 
+  // console.log(radioValue)
+  
   const handleSearch = () => {
+    
     if (searchTerm.length > 0) {
       axios
-        .get(
-          `https://api.spoonacular.com/food/ingredients/search?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&query=${searchTerm}&number=5`
+      .get(
+        `https://api.spoonacular.com/food/ingredients/search?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&query=${searchTerm}&number=5`
         )
         .then((res) => {
           setSearchResults(res.data.results);
         });
-    }
-  };
-
-  const weightSelected = () => {
+      }
+    };
+    
+  
+    const weightSelected = () => {
     setSelectWeight(amount + "g");
     setSelectQuantity("");
  
@@ -66,6 +65,8 @@ export default function AddItemScreen({ navigation }) {
     setSelectWeight("");
     
   };
+
+
   const addItemFirebase = (name, image) => {
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -116,9 +117,8 @@ export default function AddItemScreen({ navigation }) {
                 
                 return (
                   <>
-{console.log(item)}
                   <NativeBaseProvider>
-                
+      
 
                   <Box alignItems="center">
       <Box marginBottom="3%" maxW="80" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
@@ -189,28 +189,30 @@ export default function AddItemScreen({ navigation }) {
                         />
 </HStack>
   <CardAction separator={true} inColumn={false}>
-<Radio.Group name="myRadioGroup" accessibilityLabel="favorite number" value={value} onChange={nextValue => {
-    setValue(nextValue);
-  }}>
+<Radio.Group name="myRadioGroup" value={radioValue} onChange={nextValue => {
+  setRadioValue(nextValue);
+}}>
       <Radio value="one" my={1}
-      onPress={() => {
-        quantitySelected();
+      _checked={() => {
+        {console.log(amount)}
+        quantitySelected()
       }}>
         Quantity
       </Radio>
       <Radio value="two" my={1}
-      onPress={() => {
+      _checked={() => {
         weightSelected();
       }}>
         Weight(g)
       </Radio>
-       </Radio.Group>
                        
+      </Radio.Group>
        <Input mx="3" placeholder="Enter amount" w="55%" maxWidth="200px" onChangeText={(newText) => {
-                            setAmount(newText);
-                          }} />
+         setAmount(newText);
+        }} />
+        </CardAction>
+       
                         
-                      </CardAction>
  
 
         <DropDownPicker
@@ -223,10 +225,11 @@ export default function AddItemScreen({ navigation }) {
                         setItems={setItems}
                         listMode="MODAL"
                         placeholder="Select a category"
-                      />
+                        />
 
           <Button size="sm" variant="solid" colorScheme="green"
-          onPress={() => {
+          onPress={(amount) => {
+            
             if (
               value === "Select category" &&
               selectWeight === null &&
@@ -251,8 +254,7 @@ export default function AddItemScreen({ navigation }) {
                 callback: () => Popup.hide(),
               });
             } else if (
-              selectWeight === null &&
-              selectQuantity === null
+              radioValue === null
             ) {
               Popup.show({
                 type: "Warning",
@@ -270,14 +272,13 @@ export default function AddItemScreen({ navigation }) {
                 textBody: `${item.name} has been added to your storage`,
                 buttonText: "Dismiss",
                 callback: () => Popup.hide(),
-              });
-              addItemFirebase(item.name, item.image);
-            }
-          }}
-          >
+              }); 
+                addItemFirebase(item.name, item.image);
+              }
+            }}
+            >
             ADD ITEM
           </Button>
-          
         </Stack>
         </Stack>
       </Box>
