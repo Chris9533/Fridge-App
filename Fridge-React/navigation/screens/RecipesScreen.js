@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { View, Text, RefreshControl, ActivityIndicator } from 'react-native';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment } from 'firebase/firestore';
+import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment} from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { firebaseConfig } from '../../firebase';
 import moment from 'moment';
@@ -127,7 +127,7 @@ export default function RecipesScreen({navigation}) {
         })
     }
 
-    const handleYum = (ingObj, title, source, img) => {
+    const handleYum = (ingObj, title, source, img, num) => {
         const firebaseIng = []
         const firebaseComp = []
         const firebaseCategory = []
@@ -154,7 +154,6 @@ export default function RecipesScreen({navigation}) {
                 }  
             })
         })
-        console.log(filteredIng)
         filteredIng.forEach(item => {
             updateDoc(doc(db, auth.currentUser.uid, 'data', item.category, item.title), {'itemObj.amount': item.amount})
         })
@@ -167,6 +166,8 @@ export default function RecipesScreen({navigation}) {
             console.log(errorCode);
           });
         
+        let scoreRef = doc(db, `${auth.currentUser.uid}`, 'score')
+        updateDoc(scoreRef, {score: increment(num)})
     }
 
     const handleShoppingPress = (ingList) => {
@@ -277,7 +278,7 @@ export default function RecipesScreen({navigation}) {
                         </Text>}
                         <Text>{'Veggie?'}</Text>
                         {recipeIsLoading ? <ActivityIndicator /> : <Text>{recipeData.veggie.toString()}</Text>}
-                        <CardButton title='Yum' onPress={() => {handleYum(recipeData.fullIng, recipe.title, recipeData.source, recipe.img)}}/>
+                        <CardButton title='Yum' onPress={() => {handleYum(recipeData.fullIng, recipe.title, recipeData.source, recipe.img, recipe.ingUsedCount)}}/>
                         <CardButton title='Add Missing to List' onPress={() => {handleShoppingPress(recipe.ingMissing)}}/>
                         {favourites.includes(recipe.title) || optFav.includes(recipe.title) ? <Text>Favourited</Text> : <CardButton title='Favourite' onPress={()=> {handleFavourite(recipe.title, recipeData.source, recipe.img)}}/>}
                         </>

@@ -116,7 +116,7 @@ export default function AddItemScreen({ navigation }) {
                 
                 return (
                   <>
-{console.log(item)}
+
                   <NativeBaseProvider>
                 
 
