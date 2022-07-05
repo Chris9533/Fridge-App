@@ -8,6 +8,7 @@ import moment from 'moment';
 import axios from 'axios';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, CardImage, CardButton } from 'react-native-cards';
+import DropDownPicker from 'react-native-dropdown-picker';
 
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
@@ -29,6 +30,13 @@ export default function RecipesScreen({navigation}) {
     const [firebaseData, setFirebaseData] = React.useState([])
     const [favourites, setFavourites] = React.useState([])
     const [optFav, setOptFav] = React.useState([])
+
+      //States for dropdown selector
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState([]);
+  const [items, setItems] = React.useState([]);
+  const [recipeStore, setRecipeStore] = React.useState([])
+  
    
     const onRefresh = React.useCallback(() => {
         setRefreshing(true)
@@ -42,6 +50,7 @@ export default function RecipesScreen({navigation}) {
         let ingredientsStr = ''
         const recipeArr = []
         let favouriteArr = []
+        const dropdownArr = []
        
 
         const colRefFridge = collection(db, `${auth.currentUser.uid}/data/fridge`)
@@ -52,16 +61,19 @@ export default function RecipesScreen({navigation}) {
         .then((snapshot) => {
             snapshot.docs.forEach((doc) => {
             ingredientsArr.push({...doc.data(), id : doc.id})
+            dropdownArr.push({label: doc.data().itemObj.title.charAt(0).toUpperCase() + doc.data().itemObj.title.slice(1), value: doc.data().itemObj.title})
             })
         getDocs(colRefPantry)
         .then((snapshot) => {
             snapshot.docs.forEach((doc) => {
             ingredientsArr.push({...doc.data(), id : doc.id})
+            dropdownArr.push({label: doc.data().itemObj.title.charAt(0).toUpperCase() + doc.data().itemObj.title.slice(1), value: doc.data().itemObj.title})
             })
         getDocs(colRefFreezer)
         .then((snapshot) => {
             snapshot.docs.forEach((doc) => {
                 ingredientsArr.push({...doc.data(), id: doc.id})
+                dropdownArr.push({label: doc.data().itemObj.title.charAt(0).toUpperCase() + doc.data().itemObj.title.slice(1), value: doc.data().itemObj.title})
             })
 
         ingredientsArr.sort((a,b) => {return new Date(a.itemObj.expDate.toDate()) - new Date(b.itemObj.expDate.toDate())})
@@ -71,6 +83,7 @@ export default function RecipesScreen({navigation}) {
         }
 
         setFirebaseData(ingredientsArr)
+        setItems(dropdownArr)
 
         ingredientsArr.forEach((ing, i) => {
             if((i+1) === ingredientsArr.length) {   
@@ -82,7 +95,7 @@ export default function RecipesScreen({navigation}) {
                 })
 
 
-        axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=ae8fe14f28d9455ea1809e8c6dc0d936&ingredients=${ingredientsStr}&number=5`)
+        axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=39f4abc5175f4647aff9f73a69ec58d6&ingredients=${ingredientsStr}&number=5`)
             .then(res => {
                 res.data.forEach(recipe => {
                     recipeArr.push({title: recipe.title, img: recipe.image, ingTotal: recipe.usedIngredientCount + recipe.missedIngredientCount, ingUsedCount: recipe.usedIngredientCount, ingMatch: recipe.usedIngredients.map(recipe => {return recipe.name}),ingMissing: recipe.missedIngredients.map(recipe => {return recipe.name}), id: recipe.id}) 
@@ -107,7 +120,7 @@ export default function RecipesScreen({navigation}) {
         setSelectRecipe(curr => !curr)
         setRecipeId(id)
 
-        axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=ae8fe14f28d9455ea1809e8c6dc0d936&includeNutrition=false`)
+        axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=39f4abc5175f4647aff9f73a69ec58d6&includeNutrition=false`)
         .then(res => {
             setRecipeData({source: res.data.sourceUrl, veggie: res.data.vegetarian, fullIng: res.data.extendedIngredients})
             setRecipeIsLoading(false)
@@ -179,8 +192,60 @@ export default function RecipesScreen({navigation}) {
         setOptFav(oldArray => [...oldArray, title])
     }
 
-    if(isLoading)<ActivityIndicator />
+    const handleDropDown = (value) => {
+        console.log(value)
+        setIsLoading(true)
+       if(value.length > 0) {
+          let dropDownStr = ''
+          const dropDownRecipeArr = []
+          value.forEach(i => {
+              i.replace(/\s/g, '')
+          })
+           setRecipeStore(recipeList)
+           setRecipeList([])
+           value.forEach((choice, i) => {
+            if((i+1) === choice.length) {   
+                dropDownStr += `${choice}`
+                
+            } else {
+                dropDownStr += `${choice},+`
+            }
+           })
+        console.log(dropDownStr)
+       axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=39f4abc5175f4647aff9f73a69ec58d6&ingredients=${dropDownStr}&number=5`)
+           .then(res => {
+               res.data.forEach(recipe => {
+                   dropDownRecipeArr.push({title: recipe.title, img: recipe.image, ingTotal: recipe.usedIngredientCount + recipe.missedIngredientCount, ingUsedCount: recipe.usedIngredientCount, ingMatch: recipe.usedIngredients.map(recipe => {return recipe.name}),ingMissing: recipe.missedIngredients.map(recipe => {return recipe.name}), id: recipe.id}) 
+               })
+               setRecipeList(dropDownRecipeArr)
+               
+           })    
+       } else {
+           setRecipeList(recipeStore)
+
+       }
+    setIsLoading(false)
+    }
+
+    if(isLoading) return <ActivityIndicator />
     return (
+        <>
+        <DropDownPicker
+            multiple={true}
+            min={0}
+            max={2}
+            open={open}
+            value={value}
+            items={items}
+            setOpen={setOpen}
+            setValue={setValue}
+            setItems={setItems}
+            onChangeValue={(value) => {
+                handleDropDown(value)
+            }}
+            mode="BADGE"
+            badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
+            />
         <ScrollView refreshControl={
             <RefreshControl
             refreshing={refreshing}
@@ -222,5 +287,6 @@ export default function RecipesScreen({navigation}) {
                 )
             })}
         </ScrollView>
+        </>
     )
 }
