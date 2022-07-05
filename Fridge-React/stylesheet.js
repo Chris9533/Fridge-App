@@ -21,7 +21,7 @@ export const styles = StyleSheet.create({
       color: 'white',
     },
     yellow: {
-      color: 'yellow',
+      color: 'orange',
     },
     green: {
       color: 'green',
