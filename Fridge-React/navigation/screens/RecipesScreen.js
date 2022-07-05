@@ -237,6 +237,7 @@ export default function RecipesScreen({navigation}) {
             open={open}
             value={value}
             items={items}
+            searchable={true}
             setOpen={setOpen}
             setValue={setValue}
             setItems={setItems}
