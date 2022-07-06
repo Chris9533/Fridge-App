@@ -1,11 +1,12 @@
 import * as React from 'react';
-import { View, Text, Button, ActivityIndicator, RefreshControl, Linking} from 'react-native';
+import { View, Text, ActivityIndicator, RefreshControl, Linking} from 'react-native';
 import { getAuth, signOut } from "firebase/auth";
 import { ScrollView } from 'react-native-gesture-handler';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment, getDoc } from 'firebase/firestore';
 import { firebaseConfig } from '../../firebase';
 import { Card, CardImage, CardButton } from 'react-native-cards';
+import { NativeBaseProvider, Box, AspectRatio, Image, Center, Stack, HStack, Heading, VStack, Input, Divider, Flex, CheckIcon, CloseIcon, FavouriteIcon, Button } from "native-base";
 import Swiper from 'react-native-swiper'
 
 const wait = (timeout) => {
@@ -71,48 +72,100 @@ export default function ProfileScreen({navigation}) {
 
     return (
         <>
-        <Button
-  onPress={handleSignOut}
-  title="Logout"
-  color="#841584"
-  accessibilityLabel="Learn more about this purple button"
-/>
-
-        
-
         {isLoading ? <ActivityIndicator /> :  <>
-        <Text>Level: {Math.floor(foodScore.score/ 10) } Exp: {foodScore.score % 10} / 10</Text>
+        <NativeBaseProvider>
+        <Button size="sm" variant="solid" colorScheme="emerald"
+                    onPress={handleSignOut}
+                    >
+            LOG OUT
+        </Button>
+        <Text style={{fontSize: 15, textAlign: 'right', padding: 5}}>Level: {Math.floor(foodScore.score/ 10) } Exp: {foodScore.score % 10} / 10</Text>
+         
+        
         <ScrollView refreshControl={
             <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
-            />
+            /> 
           }> 
-            <Text>Favourite Recipes</Text>
-            {favRecipe.length === 0 ? <Text>Add some Favourites</Text> : <Swiper height={280} showsButtons={true} showsPagination={false}>{favRecipe.map(recipe => {
+            <Text style={{fontSize: 25, textAlign: 'center'}}>Favourite Recipes</Text>
+            {favRecipe.length === 0 ? <Text>Add some Favourites</Text> : <Swiper height={330} showsButtons={true} showsPagination={false}>{favRecipe.map(recipe => {
                return (
-               <Card key={recipe.title}>
-                    <CardImage source={{uri: recipe.img}} />
-                    <Text>{recipe.title}</Text>
-                    <Text style={{color: 'blue'}}
+                <NativeBaseProvider>
+                <Box alignItems="center">
+                    <Box marginBottom="1%" maxW="80" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
+                    borderColor: "coolGray.600",
+                    backgroundColor: "gray.700"
+                    }} _web={{
+                    shadow: 2,
+                    borderWidth: 0
+                    }} _light={{
+                    backgroundColor: "gray.50"
+                    }}>
+                    
+                <Box marginTop="10%">
+                    <AspectRatio w="100%" ratio={16 / 9}>
+                    <Image source={{
+                            uri: recipe.img
+                        }} alt="image" />
+                    </AspectRatio>
+                    <Stack p="4" space={3}>
+                        <Stack space={2} alignItems="center">
+                            <Heading size="sm" ml="-1" textTransform={'capitalize'}>
+                            {`${recipe.title}`}
+                            </Heading>
+                            <Button marginTop="1%" size="sm" variant="solid" colorScheme="emerald" 
                             onPress={() => Linking.openURL(recipe.source)}>
-                        Instructions
-                        </Text>
-                </Card>
+                                COOKING INSTRUCTIONS
+                        </Button>
+                        </Stack>
+                        </Stack>
+                </Box>
+                </Box>
+                </Box>
+                </NativeBaseProvider>
                 ) 
             })}</Swiper>}
-            <Text>Recipe History</Text>
+            <Text style={{fontSize: 25, textAlign: 'center'}} >Recipe History</Text>
             {recipeHistory.length === 0 ? <Text>Cook something</Text> : <Swiper height={280} showsButtons={true} showsPagination={false}>{recipeHistory.reverse().map(recipe => {
-                return (<Card key={recipe.title}>
-                    <CardImage source={{uri: recipe.img}} />
-                    <Text>{recipe.title}</Text>
-                    <Text style={{color: 'blue'}}
-                            onPress={() => Linking.openURL(recipe.source)}>
-                        Instructions
-                        </Text>
-                </Card>) 
+                return (
+                    <NativeBaseProvider>
+                    <Box alignItems="center">
+                        <Box marginBottom="1%" maxW="80" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
+                        borderColor: "coolGray.600",
+                        backgroundColor: "gray.700"
+                        }} _web={{
+                        shadow: 2,
+                        borderWidth: 0
+                        }} _light={{
+                        backgroundColor: "gray.50"
+                        }}>
+                        
+                    <Box marginTop="10%">
+                        <AspectRatio w="100%" ratio={16 / 9}>
+                        <Image source={{
+                                uri: recipe.img
+                            }} alt="image" />
+                        </AspectRatio>
+                        <Stack p="4" space={3}>
+                            <Stack space={2} alignItems="center">
+                                <Heading size="sm" ml="-1" textTransform={'capitalize'}>
+                                {`${recipe.title}`}
+                                </Heading>
+                                <Button marginTop="1%" size="sm" variant="solid" colorScheme="emerald" 
+                                onPress={() => Linking.openURL(recipe.source)}>
+                                    COOKING INSTRUCTIONS
+                            </Button>
+                            </Stack>
+                            </Stack>
+                    </Box>
+                    </Box>
+                    </Box>
+                    </NativeBaseProvider>
+                ) 
             })}</Swiper>}
         </ScrollView>
+        </NativeBaseProvider>
         </>}
     
         </>
