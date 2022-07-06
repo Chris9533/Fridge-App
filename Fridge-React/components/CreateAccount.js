@@ -1,6 +1,6 @@
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import * as React from 'react';
-import { Button, Text, TextInput, ImageBackground, StyleSheet, View } from 'react-native';
+import { Button, Text, TextInput, ImageBackground, StyleSheet, View, Image } from 'react-native';
 import { doc, getFirestore, setDoc } from "firebase/firestore";
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../firebase';
@@ -25,6 +25,11 @@ export default function CreateAccount() {
       fontWeight: "bold",
       textAlign: "center",
       backgroundColor: "#000000c0"
+    },
+    logo : {
+      width: 200,
+      height:200,
+      marginBottom: 50
     }
   })
 
@@ -92,6 +97,10 @@ const [show, setShow] = React.useState(false);
     <ImageBackground source={image} resizeMode="cover" style={styles.image}>
   <NativeBaseProvider>
               <Center flex={1} px="3">
+              <Image
+        style={styles.logo}
+        source={require('../Logo.png')}
+      />
   <Stack space={4} w="100%" alignItems="center">
   <Input 
   backgroundColor="primary.50"

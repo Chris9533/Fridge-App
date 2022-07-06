@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, TextInput, Button, ImageBackground, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, ImageBackground, StyleSheet,Image } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { Input, Icon, Stack, Center, NativeBaseProvider } from "native-base";
@@ -24,7 +24,13 @@ export default function LogIn({navigation}) {
       fontWeight: "bold",
       textAlign: "center",
       backgroundColor: "#000000c0"
-    }})
+    },
+    logo : {
+      width: 200,
+      height:200,
+      marginBottom: 50
+    }
+  })
 
     const auth = getAuth();
 
@@ -61,6 +67,10 @@ return (
     <ImageBackground source={image} resizeMode="cover" style={styles.image}>
 <NativeBaseProvider>
             <Center flex={1} px="3">
+<Image
+        style={styles.logo}
+        source={require('../Logo.png')}
+      />
 <Stack space={4} w="100%" alignItems="center">
 <Input 
 backgroundColor="primary.50"
