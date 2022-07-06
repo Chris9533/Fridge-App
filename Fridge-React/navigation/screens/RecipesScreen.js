@@ -394,9 +394,9 @@ export default function RecipesScreen({navigation}) {
             })}
         </ScrollView>
 
+      </Root>
         </ImageBackground>
         </View>
-      </Root>
 
         </>
     )
