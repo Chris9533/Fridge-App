@@ -77,6 +77,11 @@ export const styles = StyleSheet.create({
     },
     caps: {
       textTransform: 'capitalize',
+    },
+    shoppingCard: {
+      borderRadius: 10,
+      marginBottom: '3%',
+      backgroundColor: 'lightblue',
     }
 
   });

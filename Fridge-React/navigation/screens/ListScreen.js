@@ -64,10 +64,10 @@ export default function ListScreen({navigation}) {
    />
  }> 
        {display.map((item) => {
-           console.log(item.itemObj, "here")
+       
         return (
             
-        <Card key={item.id} style={styles.card}>
+        <Card key={item.id} style={styles.shoppingCard}>
             <CardAction 
           separator={true} 
            inColumn={false}>
