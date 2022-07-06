@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, RefreshControl, ActivityIndicator } from 'react-native';
+import { View, Text, RefreshControl, ActivityIndicator, Linking } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment} from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -96,6 +96,7 @@ export default function RecipesScreen({navigation}) {
 
 
         axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&ingredients=${ingredientsStr}&number=5`)
+
             .then(res => {
                 res.data.forEach(recipe => {
                     recipeArr.push({title: recipe.title, img: recipe.image, ingTotal: recipe.usedIngredientCount + recipe.missedIngredientCount, ingUsedCount: recipe.usedIngredientCount, ingMatch: recipe.usedIngredients.map(recipe => {return recipe.name}),ingMissing: recipe.missedIngredients.map(recipe => {return recipe.name}), id: recipe.id}) 
@@ -119,6 +120,7 @@ export default function RecipesScreen({navigation}) {
         setRecipeIsLoading(true)
         setSelectRecipe(curr => !curr)
         setRecipeId(id)
+
 
         axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&includeNutrition=false`)
         .then(res => {
@@ -212,8 +214,10 @@ export default function RecipesScreen({navigation}) {
                 dropDownStr += `${choice},+`
             }
            })
+
        
        axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&ingredients=${dropDownStr}&number=5`)
+
            .then(res => {
                res.data.forEach(recipe => {
                    dropDownRecipeArr.push({title: recipe.title, img: recipe.image, ingTotal: recipe.usedIngredientCount + recipe.missedIngredientCount, ingUsedCount: recipe.usedIngredientCount, ingMatch: recipe.usedIngredients.map(recipe => {return recipe.name}),ingMissing: recipe.missedIngredients.map(recipe => {return recipe.name}), id: recipe.id}) 
@@ -273,7 +277,7 @@ export default function RecipesScreen({navigation}) {
                         })}
                         <Text>{'Instructions'}</Text>
                         {recipeIsLoading ? <ActivityIndicator /> : <Text style={{color: 'blue'}}
-                            onPress={() => Linking.openURL(recipe.source)}>
+                            onPress={() => Linking.openURL(recipeData.source)}>
                         Click Here
                         </Text>}
                         <Text>{'Veggie?'}</Text>

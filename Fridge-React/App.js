@@ -15,6 +15,7 @@ import { styles } from './stylesheet';
 
 
 function App() {
+  console.disableYellowBox = true;
 
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
