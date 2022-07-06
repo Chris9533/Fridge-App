@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, RefreshControl, TextInput} from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, RefreshControl, TextInput, ActivityIndicator} from 'react-native';
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'
 import SearchBar from "react-native-dynamic-search-bar";
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -38,11 +38,13 @@ export default function HomeScreen({navigation}) {
   const [refreshing, setRefreshing] = React.useState(false)
   const [selectItem, setSelectItem] = React.useState(false)
   const [itemId, setItemId] = React.useState('')
+  const [isLoading, setIsLoading] = React.useState(true)
 
   const [selectWeight, setSelectWeight] = React.useState(null);
   const [selectQuantity, setSelectQuantity] = React.useState(null);
   const [reload, setReload] = React.useState(false)
   const [amount, setAmount] = React.useState("");
+  const [noFilter, setNoFilter] = React.useState(false);
 
   const onRefresh = React.useCallback(() => {
     setRefreshing(true)
@@ -120,6 +122,7 @@ export default function HomeScreen({navigation}) {
           } else {
             setDisplay(all)
           }
+          setIsLoading(false);
     })
     })
   })
@@ -156,7 +159,12 @@ display.forEach((item) => {
   }
   
 })
+if (filteredResults.length === 0 ) {
+ setNoFilter(true);
+
+} else {
 setDisplay(filteredResults)
+}
 
 }
 
@@ -177,6 +185,27 @@ if (milliseconds - Date.now() < 0) {
   return `${daysRemaining} days remaining`
 }
 
+}
+
+if(isLoading) return <ActivityIndicator />
+if (noFilter) {
+  return (
+    <Root>
+      <View>
+      {Popup.show({
+                                type: "Warning",
+                                title:
+                                  `No items match ${searchTerm}`,
+                                button: true,
+                                textBody: ``,
+                                buttonText: "Dismiss",
+                                callback: () => {Popup.hide(); setNoFilter(false)},
+                              })}
+      </View>
+
+    </Root>
+
+  )
 }
 
 if (display.length === 0 ) {
