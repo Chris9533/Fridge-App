@@ -47,7 +47,7 @@ console.log(amount);
     if (searchTerm.length > 0) {
       axios
       .get(
-        `https://api.spoonacular.com/food/ingredients/search?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&query=${searchTerm}&number=5`
+        `https://api.spoonacular.com/food/ingredients/search?apiKey=54729ca1c8c14a46ab9a978676777809&query=${searchTerm}&number=5`
         )
         .then((res) => {
           setSearchResults(res.data.results);
