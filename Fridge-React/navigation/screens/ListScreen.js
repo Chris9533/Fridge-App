@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, RefreshControl } from 'react-native';
+import { View, Text, RefreshControl, ImageBackground } from 'react-native';
 import { getFirestore, getDocs, collection, Firestore, doc, deleteDoc } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 import { initializeApp } from 'firebase/app'
@@ -13,6 +13,9 @@ const wait = (timeout) => {
   }
 
 export default function ListScreen({navigation}) {
+
+    const image = {uri : 'https://img.freepik.com/free-vector/seamless-background-vegetables-radishes-peppers-cabbage-carrots-broccoli-peas-vector-illustration_1284-42027.jpg?t=st=1657117677~exp=1657118277~hmac=7770a747cc9275418a499832dc98fe626a1ba1ab44cf81050d5ff362d05d5346&w=1060'}
+
 
     const app = initializeApp(firebaseConfig);
     const [display, setDisplay] = React.useState([])
@@ -56,18 +59,24 @@ export default function ListScreen({navigation}) {
 
 
     return (
-        <>
+        <View>
+        <ImageBackground source={image} resizeMode="cover" style={styles.image}>
         <ScrollView refreshControl={
-   <RefreshControl
-   refreshing={refreshing}
-   onRefresh={onRefresh}
-   />
+            <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            />
  }> 
        {display.map((item) => {
        
         return (
             
+<<<<<<< HEAD
         <Card key={item.id} style={styles.shoppingCard}>
+=======
+           
+        <Card key={item.id} style={styles.card}>
+>>>>>>> 342664ebdcb679744cf899055e47a8ff447bbb84
             <CardAction 
           separator={true} 
            inColumn={false}>
@@ -86,6 +95,8 @@ export default function ListScreen({navigation}) {
 
        })}
        </ScrollView>
-        </>
+    
+        </ImageBackground>
+        </View>
     )
 }
