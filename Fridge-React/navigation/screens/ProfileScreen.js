@@ -3,7 +3,7 @@ import { View, Text, Button, ActivityIndicator, RefreshControl, Linking} from 'r
 import { getAuth, signOut } from "firebase/auth";
 import { ScrollView } from 'react-native-gesture-handler';
 import { initializeApp } from 'firebase/app';
-import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment } from 'firebase/firestore';
+import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment, getDoc } from 'firebase/firestore';
 import { firebaseConfig } from '../../firebase';
 import { Card, CardImage, CardButton } from 'react-native-cards';
 
@@ -21,6 +21,7 @@ export default function ProfileScreen({navigation}) {
     const [favRecipe, setFavRecipe] = React.useState([])
     const [isLoading, setIsLoading] = React.useState(true)
     const [recipeHistory, setRecipeHistory] = React.useState([])
+    const [foodScore, setFoodScore] = React.useState({})
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true)
@@ -33,6 +34,7 @@ export default function ProfileScreen({navigation}) {
 
         const colRefFav = collection(db, `${auth.currentUser.uid}/data/Favourites`)
         const colRefHstry = collection(db, `${auth.currentUser.uid}/data/History`)
+        const colRefScore = doc(db, `${auth.currentUser.uid}`, 'score')
         getDocs(colRefFav).then(snapshot => {
             snapshot.forEach(doc => {
                 favArr.push(doc.data().favObj)
@@ -46,11 +48,14 @@ export default function ProfileScreen({navigation}) {
            htyArr = htyArr.slice(0,5)
        }
             setRecipeHistory(htyArr)
-            setIsLoading(false) 
-    
+        getDoc(colRefScore).then(snapshot => {
+            setFoodScore(snapshot.data())
+        })   
+    setIsLoading(false) 
         })
+       
         })
-        
+         
     }, [refreshing])
 
     
@@ -71,7 +76,11 @@ export default function ProfileScreen({navigation}) {
   color="#841584"
   accessibilityLabel="Learn more about this purple button"
 />
-        {isLoading ? <ActivityIndicator /> :  
+
+        
+
+        {isLoading ? <ActivityIndicator /> :  <>
+        <Text>Level: {Math.floor(foodScore.score/ 10) } Exp: {foodScore.score % 10} / 10</Text>
         <ScrollView refreshControl={
             <RefreshControl
             refreshing={refreshing}
@@ -100,7 +109,8 @@ export default function ProfileScreen({navigation}) {
                         </Text>
                 </Card>) 
             })}
-        </ScrollView>}
+        </ScrollView>
+        </>}
     
         </>
     )

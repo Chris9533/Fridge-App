@@ -160,6 +160,25 @@ setDisplay(filteredResults)
 
 }
 
+const daysRemaining = (date) => {
+  const milliseconds = date.seconds * 1000
+
+  const daysRemaining = Math.ceil((milliseconds - Date.now()) / 86400000);
+  const outOfDate = Math.floor((milliseconds - Date.now()) / 86400000);
+
+  // console.log(outOfDate)
+
+
+if (milliseconds - Date.now() < 0) {
+  return `${outOfDate * -1} Day(s) Out of Date`
+} else if (milliseconds - Date.now() < 86400000) {
+  return "Last day to use!"
+} else {
+  return `${daysRemaining} days remaining`
+}
+
+}
+
 if (display.length === 0 ) {
   return (
     <>
@@ -365,10 +384,8 @@ return (
 
           <HStack alignItems="center" space={4} justifyContent="space-between">
             <HStack alignItems="center">
-              <Text color="coolGray.600" _dark={{
-              color: "warmGray.200"
-            }} fontWeight="400">
-                2 days remaining
+              <Text color="coolGray.600" fontWeight="400" style={Math.ceil(((item.itemObj.expDate.seconds)*1000  - Date.now()) / 86400000) <= 0 ? styles.red : Math.ceil(((item.itemObj.expDate.seconds)*1000  - Date.now()) / 86400000) > 3 ? styles.green : styles.yellow}>
+                {daysRemaining(item.itemObj.expDate)}
               </Text>
             </HStack>
           </HStack>

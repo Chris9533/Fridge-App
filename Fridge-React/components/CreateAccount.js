@@ -1,6 +1,9 @@
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import * as React from 'react';
 import { Button, Text, TextInput } from 'react-native';
+import { doc, getFirestore, setDoc } from "firebase/firestore";
+import { initializeApp } from 'firebase/app';
+import { firebaseConfig } from '../firebase';
 
 export default function CreateAccount() {
 
@@ -12,11 +15,10 @@ const [passwordError, setPasswordError] = React.useState(false)
 const [passwordMatch, setPasswordMatch] = React.useState(false)
 const [existingEmail, setExistingEmail] = React.useState(false)
 
+   
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
     const auth = getAuth();
-
-
-
-
 
 
   function handleCreateAccount() {
@@ -26,7 +28,10 @@ const [existingEmail, setExistingEmail] = React.useState(false)
         createUserWithEmailAndPassword(auth, email, password)
        .then((userCredential) => {
          // Signed in 
+         console.log('here')
          const user = userCredential.user;
+        const scoreRef = doc(db, auth.currentUser.uid, "score")
+        setDoc(scoreRef, {"score": 0})
          // ...
        })
        .catch((error) => {

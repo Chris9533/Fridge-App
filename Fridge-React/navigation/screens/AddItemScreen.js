@@ -118,6 +118,7 @@ console.log(amount);
                 
                 return (
                   <>
+
                   <NativeBaseProvider>
       
 
@@ -190,6 +191,7 @@ console.log(amount);
                           onSubmit={(value) => setDate(value)}
                         />
   <CardAction separator={true} inColumn={false}>
+
 <Radio.Group name="myRadioGroup" value={radio} onChange={nextValue => {
   setRadio(nextValue)
   
@@ -202,6 +204,7 @@ console.log(amount);
       >
         Weight(g)
       </Radio>
+
                        
       </Radio.Group>
        <Input isDisabled={radio === null} mx="3" placeholder="Enter amount" w="55%" maxWidth="200px" onChangeText={(newText) => {
@@ -211,6 +214,7 @@ console.log(amount);
         }} />
         </CardAction>
        
+
                         
  
 
