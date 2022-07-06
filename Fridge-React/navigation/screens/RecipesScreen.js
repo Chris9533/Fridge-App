@@ -11,6 +11,7 @@ import { Card, CardImage, CardButton } from 'react-native-cards';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { NativeBaseProvider, Box, AspectRatio, Image, Center, Stack, HStack, Heading, VStack, Button, Input, Divider, Flex, CheckIcon, CloseIcon, FavouriteIcon } from "native-base";
 import { styles } from '../../stylesheet';
+import { Root, Popup } from "popup-ui";
 
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
@@ -246,10 +247,10 @@ export default function RecipesScreen({navigation}) {
     if(isLoading) return <ActivityIndicator />
     return (
         <>
+
         <View>
         <ImageBackground source={image} resizeMode="cover" style={styles.image}>
-
-            
+        <Root>
         <DropDownPicker
             multiple={true}
             min={0}
@@ -301,7 +302,7 @@ export default function RecipesScreen({navigation}) {
                         
                         </Stack>
                         <Button marginTop="3%" size="sm" variant="solid" colorScheme="emerald" onPress={() => {handleSwitch(recipe.id)}}>
-                        {!selectRecipe ? 'COOK THIS' : recipeId === recipe.id ? 'SOMETHING ELSE' : 'Cook This'}
+                        {!selectRecipe ? 'COOK THIS' : recipeId === recipe.id ? 'Hide' : 'Cook This'}
                         </Button>
                         {selectRecipe && recipeId === recipe.id ? 
                         <>
@@ -333,7 +334,15 @@ export default function RecipesScreen({navigation}) {
       
                         </HStack>
                        
-                        <Button marginTop='5%' marginBottom='5%' variant='subtle' colorScheme='emerald' size='sm' onPress={() => {handleShoppingPress(recipe.ingMissing)}}>
+                        <Button marginTop='5%' marginBottom='5%' variant='subtle' colorScheme='emerald' size='sm' onPress={() => {handleShoppingPress(recipe.ingMissing);  
+                        Popup.show({
+                type: "Success",
+                title: "Added",
+                button: true,
+                textBody: `Missing Ingredients have been added to your shopping list`,
+                buttonText: "Dismiss",
+                callback: () => Popup.hide(),
+              });}}>
                             ADD MISSING ITEMS TO LIST
                         </Button>
 
@@ -345,7 +354,15 @@ export default function RecipesScreen({navigation}) {
                         </Button>}
 
                      
-                        <Button size='sm' marginTop='5%' marginBottom='5%' variant='subtle' colorScheme='emerald' onPress={() => {handleYum(recipeData.fullIng, recipe.title, recipeData.source, recipe.img, recipe.ingUsedCount)}}>
+                        <Button size='sm' marginTop='5%' marginBottom='5%' variant='subtle' colorScheme='emerald' onPress={() => {handleYum(recipeData.fullIng, recipe.title, recipeData.source, recipe.img, recipe.ingUsedCount);
+                         Popup.show({
+                            type: "Success",
+                            title: "Points Added",
+                            button: true,
+                            textBody: `Yay! you gained ${recipe.ingUsedCount} points. Used ingredients will be taken out of your storage `,
+                            buttonText: "Dismiss",
+                            callback: () => Popup.hide(),
+                          });}}>
                         COOK NOW
                         </Button>
                        
@@ -353,7 +370,15 @@ export default function RecipesScreen({navigation}) {
                         </Box>
                         
                         <Center h='10' rounded="md" shadow={3}>
-                        {favourites.includes(recipe.title) || optFav.includes(recipe.title) ? <FavouriteIcon color='red.600' /> : <FavouriteIcon  onPress={()=> {handleFavourite(recipe.title, recipeData.source, recipe.img)}}/>}
+                        {favourites.includes(recipe.title) || optFav.includes(recipe.title) ? <FavouriteIcon color='red.600' /> : <FavouriteIcon  onPress={()=> {handleFavourite(recipe.title, recipeData.source, recipe.img);
+                        Popup.show({
+                            type: "Success",
+                            title: "Added",
+                            button: true,
+                            textBody: `${recipe.title} has been added to your favourite recipes. View them in the Profile Screen`,
+                            buttonText: "Dismiss",
+                            callback: () => Popup.hide(),
+                          });}}/>}
 
                         </Center>
                         </>
@@ -368,8 +393,11 @@ export default function RecipesScreen({navigation}) {
                 )
             })}
         </ScrollView>
+
         </ImageBackground>
         </View>
+      </Root>
+
         </>
     )
 }

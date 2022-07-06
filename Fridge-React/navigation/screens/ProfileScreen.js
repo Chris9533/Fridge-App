@@ -7,6 +7,7 @@ import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment, g
 import { firebaseConfig } from '../../firebase';
 import { Card, CardImage, CardButton } from 'react-native-cards';
 import { styles } from '../../stylesheet';
+import Swiper from 'react-native-swiper'
 
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
@@ -94,18 +95,20 @@ export default function ProfileScreen({navigation}) {
             />
           }> 
             <Text>Favourite Recipes</Text>
-            {favRecipe.length === 0 ? <Text>Add some Favourites</Text> : favRecipe.map(recipe => {
-               return (<Card key={recipe.title}>
+            {favRecipe.length === 0 ? <Text>Add some Favourites</Text> : <Swiper height={280} showsButtons={true} showsPagination={false}>{favRecipe.map(recipe => {
+               return (
+               <Card key={recipe.title}>
                     <CardImage source={{uri: recipe.img}} />
                     <Text>{recipe.title}</Text>
                     <Text style={{color: 'blue'}}
                             onPress={() => Linking.openURL(recipe.source)}>
                         Instructions
                         </Text>
-                </Card>) 
-            })}
+                </Card>
+                ) 
+            })}</Swiper>}
             <Text>Recipe History</Text>
-            {recipeHistory.length === 0 ? <Text>Cook something</Text> : recipeHistory.reverse().map(recipe => {
+            {recipeHistory.length === 0 ? <Text>Cook something</Text> : <Swiper height={280} showsButtons={true} showsPagination={false}>{recipeHistory.reverse().map(recipe => {
                 return (<Card key={recipe.title}>
                     <CardImage source={{uri: recipe.img}} />
                     <Text>{recipe.title}</Text>
@@ -114,7 +117,7 @@ export default function ProfileScreen({navigation}) {
                         Instructions
                         </Text>
                 </Card>) 
-            })}
+            })}</Swiper>}
         </ScrollView>
         </>}
         </ImageBackground>
