@@ -78,10 +78,17 @@ export const styles = StyleSheet.create({
     caps: {
       textTransform: 'capitalize',
     },
+<<<<<<< HEAD
     shoppingCard: {
       borderRadius: 10,
       marginBottom: '3%',
       backgroundColor: 'lightblue',
+=======
+    image: {
+     
+      width: '100%',
+    height: '100%',
+>>>>>>> 7ad4d93b2990011677b3b47bbdc635e747dbf446
     }
 
   });
