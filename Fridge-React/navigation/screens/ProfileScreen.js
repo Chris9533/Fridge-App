@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, ActivityIndicator, RefreshControl, Linking} from 'react-native';
+import { View, Text, Button, ActivityIndicator, RefreshControl, Linking, ImageBackground} from 'react-native';
 import { getAuth, signOut } from "firebase/auth";
 import { ScrollView } from 'react-native-gesture-handler';
 import { initializeApp } from 'firebase/app';
@@ -7,6 +7,7 @@ import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment, g
 import { firebaseConfig } from '../../firebase';
 import { Card, CardImage, CardButton } from 'react-native-cards';
 import { NativeBaseProvider, Box, AspectRatio, Image, Center, Stack, HStack, Heading, VStack, Input, Divider, Flex, CheckIcon, CloseIcon, FavouriteIcon, Button } from "native-base";
+import { styles } from '../../stylesheet';
 import Swiper from 'react-native-swiper'
 
 const wait = (timeout) => {
@@ -14,6 +15,9 @@ const wait = (timeout) => {
   } 
 
 export default function ProfileScreen({navigation}) {
+
+    const image = {uri : 'https://img.freepik.com/free-vector/seamless-background-vegetables-radishes-peppers-cabbage-carrots-broccoli-peas-vector-illustration_1284-42027.jpg?t=st=1657117677~exp=1657118277~hmac=7770a747cc9275418a499832dc98fe626a1ba1ab44cf81050d5ff362d05d5346&w=1060'}
+
 
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -72,6 +76,7 @@ export default function ProfileScreen({navigation}) {
 
     return (
         <>
+        <View>
         {isLoading ? <ActivityIndicator /> :  <>
         <NativeBaseProvider>
         <Button size="sm" variant="solid" colorScheme="emerald"
@@ -167,7 +172,8 @@ export default function ProfileScreen({navigation}) {
         </ScrollView>
         </NativeBaseProvider>
         </>}
-    
+        </ImageBackground>
+    </View>
         </>
     )
 }

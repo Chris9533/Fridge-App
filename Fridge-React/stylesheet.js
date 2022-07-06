@@ -77,6 +77,13 @@ export const styles = StyleSheet.create({
     },
     caps: {
       textTransform: 'capitalize',
+    },
+
+    image: {
+     
+      width: '100%',
+    height: '100%',
+
     }
 
   });

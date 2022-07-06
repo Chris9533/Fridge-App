@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { StyleSheet, View, Text, ScrollView, TouchableOpacity, RefreshControl, TextInput, ActivityIndicator} from 'react-native';
+import { StyleSheet, View, Text, ScrollView, TouchableOpacity, RefreshControl, TextInput, ActivityIndicator, ImageBackground} from 'react-native';
 import { Card, CardTitle, CardContent, CardAction, CardButton, CardImage } from 'react-native-cards'
 import SearchBar from "react-native-dynamic-search-bar";
 import DropDownPicker from 'react-native-dropdown-picker';
@@ -19,6 +19,7 @@ const wait = (timeout) => {
 export default function HomeScreen({navigation}) {
 
   
+  const image = {uri : 'https://img.freepik.com/free-vector/seamless-background-vegetables-radishes-peppers-cabbage-carrots-broccoli-peas-vector-illustration_1284-42027.jpg?t=st=1657117677~exp=1657118277~hmac=7770a747cc9275418a499832dc98fe626a1ba1ab44cf81050d5ff362d05d5346&w=1060'}
 
 
   //States for dropdown selector
@@ -236,6 +237,7 @@ if (display.length === 0 ) {
     return (
       <Root>
         <View>
+        <ImageBackground source={image} resizeMode="cover" style={styles.image}>
 
         <>
 <DropDownPicker
@@ -262,7 +264,7 @@ if (display.length === 0 ) {
 />
 
 
- <ScrollView contentContainerStyle={{paddingBottom: 120}} refreshControl={
+ <ScrollView contentContainerStyle={{paddingBottom: 240}} refreshControl={
    <RefreshControl
    refreshing={refreshing}
    onRefresh={onRefresh}
@@ -327,7 +329,7 @@ return (
         base: "auto",
         md: "0"
       }}>
-          <Button size="sm" variant="solid" colorScheme="green"
+          <Button size="sm" variant="solid" colorScheme="emerald"
           onPress={() => {handleShoppingPress(item.itemObj.title); Popup.show({
             type: "Success",
             title:
@@ -339,7 +341,7 @@ return (
           });}}>
             ADD TO LIST
           </Button>
-          <Button size="sm" variant="solid" colorScheme="primary"
+          <Button size="sm" variant="subtle" colorScheme="emerald"
           onPress={() => {handleSwitch(item.itemObj.title)}}>
             CHANGE QUANTITY
           </Button>
@@ -364,7 +366,7 @@ return (
                         >Quantity</Button>
                         </CardAction> 
                         
-                        <Button size="sm" colorScheme="green"
+                        <Button size="sm" colorScheme="emerald"
 
                         onPress={() => {
                           if (selectWeight === null &&
@@ -431,6 +433,7 @@ return (
  
 </ScrollView>
         </>
+        </ImageBackground>
         </View>
         </Root>
     )

@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, RefreshControl, ActivityIndicator, Linking } from 'react-native';
+import { View, Text, RefreshControl, ActivityIndicator, Linking, ImageBackground } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment} from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -11,12 +11,16 @@ import { Card, CardImage, CardButton } from 'react-native-cards';
 import DropDownPicker from 'react-native-dropdown-picker';
 import { NativeBaseProvider, Box, AspectRatio, Image, Center, Stack, HStack, Heading, VStack, Button, Input, Divider, Flex, CheckIcon, CloseIcon, FavouriteIcon } from "native-base";
 import { styles } from '../../stylesheet';
+import { Root, Popup } from "popup-ui";
 
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
   }
   
 export default function RecipesScreen({navigation}) {
+
+    const image = {uri : 'https://img.freepik.com/free-vector/seamless-background-vegetables-radishes-peppers-cabbage-carrots-broccoli-peas-vector-illustration_1284-42027.jpg?t=st=1657117677~exp=1657118277~hmac=7770a747cc9275418a499832dc98fe626a1ba1ab44cf81050d5ff362d05d5346&w=1060'}
+
         
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -243,6 +247,10 @@ export default function RecipesScreen({navigation}) {
     if(isLoading) return <ActivityIndicator />
     return (
         <>
+
+        <View>
+        <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+        <Root>
         <DropDownPicker
             multiple={true}
             min={0}
@@ -260,7 +268,7 @@ export default function RecipesScreen({navigation}) {
             mode="BADGE"
             badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
             />
-        <ScrollView refreshControl={
+        <ScrollView contentContainerStyle={{paddingBottom: 160}} refreshControl={
             <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
@@ -294,7 +302,7 @@ export default function RecipesScreen({navigation}) {
                         
                         </Stack>
                         <Button marginTop="3%" size="sm" variant="solid" colorScheme="emerald" onPress={() => {handleSwitch(recipe.id)}}>
-                        {!selectRecipe ? 'COOK THIS' : recipeId === recipe.id ? 'SOMETHING ELSE' : 'Cook This'}
+                        {!selectRecipe ? 'COOK THIS' : recipeId === recipe.id ? 'Hide' : 'Cook This'}
                         </Button>
                         {selectRecipe && recipeId === recipe.id ? 
                         <>
@@ -326,7 +334,15 @@ export default function RecipesScreen({navigation}) {
       
                         </HStack>
                        
-                        <Button marginTop='5%' marginBottom='5%' variant='subtle' colorScheme='emerald' size='sm' onPress={() => {handleShoppingPress(recipe.ingMissing)}}>
+                        <Button marginTop='5%' marginBottom='5%' variant='subtle' colorScheme='emerald' size='sm' onPress={() => {handleShoppingPress(recipe.ingMissing);  
+                        Popup.show({
+                type: "Success",
+                title: "Added",
+                button: true,
+                textBody: `Missing Ingredients have been added to your shopping list`,
+                buttonText: "Dismiss",
+                callback: () => Popup.hide(),
+              });}}>
                             ADD MISSING ITEMS TO LIST
                         </Button>
 
@@ -338,7 +354,15 @@ export default function RecipesScreen({navigation}) {
                         </Button>}
 
                      
-                        <Button size='sm' marginTop='5%' marginBottom='5%' variant='subtle' colorScheme='emerald' onPress={() => {handleYum(recipeData.fullIng, recipe.title, recipeData.source, recipe.img, recipe.ingUsedCount)}}>
+                        <Button size='sm' marginTop='5%' marginBottom='5%' variant='subtle' colorScheme='emerald' onPress={() => {handleYum(recipeData.fullIng, recipe.title, recipeData.source, recipe.img, recipe.ingUsedCount);
+                         Popup.show({
+                            type: "Success",
+                            title: "Points Added",
+                            button: true,
+                            textBody: `Yay! you gained ${recipe.ingUsedCount} points. Used ingredients will be taken out of your storage `,
+                            buttonText: "Dismiss",
+                            callback: () => Popup.hide(),
+                          });}}>
                         COOK NOW
                         </Button>
                        
@@ -346,7 +370,15 @@ export default function RecipesScreen({navigation}) {
                         </Box>
                         
                         <Center h='10' rounded="md" shadow={3}>
-                        {favourites.includes(recipe.title) || optFav.includes(recipe.title) ? <FavouriteIcon color='red.600' /> : <FavouriteIcon  onPress={()=> {handleFavourite(recipe.title, recipeData.source, recipe.img)}}/>}
+                        {favourites.includes(recipe.title) || optFav.includes(recipe.title) ? <FavouriteIcon color='red.600' /> : <FavouriteIcon  onPress={()=> {handleFavourite(recipe.title, recipeData.source, recipe.img);
+                        Popup.show({
+                            type: "Success",
+                            title: "Added",
+                            button: true,
+                            textBody: `${recipe.title} has been added to your favourite recipes. View them in the Profile Screen`,
+                            buttonText: "Dismiss",
+                            callback: () => Popup.hide(),
+                          });}}/>}
 
                         </Center>
                         </>
@@ -361,6 +393,11 @@ export default function RecipesScreen({navigation}) {
                 )
             })}
         </ScrollView>
+
+      </Root>
+        </ImageBackground>
+        </View>
+
         </>
     )
 }
