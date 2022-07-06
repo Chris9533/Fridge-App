@@ -1,11 +1,10 @@
 import * as React from 'react';
-import { View, Text, Button, ActivityIndicator, RefreshControl, Linking, ImageBackground} from 'react-native';
+import { View, Text, ActivityIndicator, RefreshControl, Linking, ImageBackground} from 'react-native';
 import { getAuth, signOut } from "firebase/auth";
 import { ScrollView } from 'react-native-gesture-handler';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment, getDoc } from 'firebase/firestore';
 import { firebaseConfig } from '../../firebase';
-import { Card, CardImage, CardButton } from 'react-native-cards';
 import { NativeBaseProvider, Box, AspectRatio, Image, Center, Stack, HStack, Heading, VStack, Input, Divider, Flex, CheckIcon, CloseIcon, FavouriteIcon, Button } from "native-base";
 import { styles } from '../../stylesheet';
 import Swiper from 'react-native-swiper'
@@ -77,6 +76,7 @@ export default function ProfileScreen({navigation}) {
     return (
         <>
         <View>
+        <ImageBackground source={image} resizeMode="cover" style={styles.image}>
         {isLoading ? <ActivityIndicator /> :  <>
         <NativeBaseProvider>
         <Button size="sm" variant="solid" colorScheme="emerald"
@@ -172,7 +172,7 @@ export default function ProfileScreen({navigation}) {
         </ScrollView>
         </NativeBaseProvider>
         </>}
-        </ImageBackground>
+    </ImageBackground>
     </View>
         </>
     )

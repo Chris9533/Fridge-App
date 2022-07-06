@@ -264,7 +264,7 @@ if (display.length === 0 ) {
 />
 
 
- <ScrollView contentContainerStyle={{paddingBottom: 240}} refreshControl={
+ <ScrollView contentContainerStyle={{paddingBottom: 40}} refreshControl={
    <RefreshControl
    refreshing={refreshing}
    onRefresh={onRefresh}
