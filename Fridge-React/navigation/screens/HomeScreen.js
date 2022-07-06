@@ -150,8 +150,7 @@ const handleFilter = () => {
 const filteredResults = []
 
 display.forEach((item) => {
-  console.log(item.id)
-  if(item.id == searchTerm) {
+  if(item.id.toLowerCase() == searchTerm.toLowerCase()) {
     filteredResults.push(item)
   }
   

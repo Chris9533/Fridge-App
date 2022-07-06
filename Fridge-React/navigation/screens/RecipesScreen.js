@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, RefreshControl, ActivityIndicator } from 'react-native';
+import { View, Text, RefreshControl, ActivityIndicator, Linking } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment} from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -273,7 +273,7 @@ export default function RecipesScreen({navigation}) {
                         })}
                         <Text>{'Instructions'}</Text>
                         {recipeIsLoading ? <ActivityIndicator /> : <Text style={{color: 'blue'}}
-                            onPress={() => Linking.openURL(recipe.source)}>
+                            onPress={() => Linking.openURL(recipeData.source)}>
                         Click Here
                         </Text>}
                         <Text>{'Veggie?'}</Text>
