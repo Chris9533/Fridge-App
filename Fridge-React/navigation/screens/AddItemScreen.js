@@ -35,8 +35,10 @@ export default function AddItemScreen({ navigation }) {
   const [amount, setAmount] = React.useState(0);
   const [selectWeight, setSelectWeight] = React.useState(null);
   const [selectQuantity, setSelectQuantity] = React.useState(null);
-  const [radioValue, setRadioValue] = React.useState("")
+  const [radio, setRadio] = React.useState(null);
 
+
+console.log(amount);
 
   // console.log(radioValue)
   
@@ -52,19 +54,18 @@ export default function AddItemScreen({ navigation }) {
         });
       }
     };
-    
   
-    const weightSelected = () => {
-    setSelectWeight(amount + "g");
-    setSelectQuantity("");
- 
-  };
 
-  const quantitySelected = () => {
-    setSelectQuantity(amount);
-    setSelectWeight("");
-    
-  };
+  const setRadioValue = (val) => {
+
+    if( radio === 'weight' ) {
+      setSelectWeight(val + "g");
+      setSelectQuantity(null);
+    } else {
+      setSelectQuantity(val);
+      setSelectWeight(null);
+    }
+  }
 
 
   const addItemFirebase = (name, image) => {
@@ -121,7 +122,7 @@ export default function AddItemScreen({ navigation }) {
       
 
                   <Box alignItems="center">
-      <Box marginBottom="3%" maxW="80" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
+      <Box id={item.id} marginBottom="3%" maxW="80" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
       borderColor: "coolGray.600",
       backgroundColor: "gray.700"
     }} _web={{
@@ -166,13 +167,14 @@ export default function AddItemScreen({ navigation }) {
 
 <HStack alignItems="center" space={4} justifyContent="space-between">
            
-              <Text color="coolGray.600" _dark={{
+              {/* <Text color="coolGray.600" _dark={{
               color: "warmGray.200"
             }} fontWeight="400">
                 Expiry Date:
-              </Text>
+              </Text> */}
             
           
+            </HStack>
 
 <DateField
                           defaultValue={new Date()}
@@ -187,28 +189,25 @@ export default function AddItemScreen({ navigation }) {
                           }}
                           onSubmit={(value) => setDate(value)}
                         />
-</HStack>
   <CardAction separator={true} inColumn={false}>
-<Radio.Group name="myRadioGroup" value={radioValue} onChange={nextValue => {
-  setRadioValue(nextValue);
+<Radio.Group name="myRadioGroup" value={radio} onChange={nextValue => {
+  setRadio(nextValue)
+  
 }}>
-      <Radio value="one" my={1}
-      _checked={() => {
-        {console.log(amount)}
-        quantitySelected()
-      }}>
+      <Radio value="quantity" my={1}
+      >
         Quantity
       </Radio>
-      <Radio value="two" my={1}
-      _checked={() => {
-        weightSelected();
-      }}>
+      <Radio value="weight" my={1}
+      >
         Weight(g)
       </Radio>
                        
       </Radio.Group>
-       <Input mx="3" placeholder="Enter amount" w="55%" maxWidth="200px" onChangeText={(newText) => {
-         setAmount(newText);
+       <Input isDisabled={radio === null} mx="3" placeholder="Enter amount" w="55%" maxWidth="200px" onChangeText={(newText) => {
+         setAmount(newText)
+         console.log(amount, '<<<');
+         setRadioValue(newText);
         }} />
         </CardAction>
        
@@ -254,7 +253,7 @@ export default function AddItemScreen({ navigation }) {
                 callback: () => Popup.hide(),
               });
             } else if (
-              radioValue === null
+              radio === null
             ) {
               Popup.show({
                 type: "Warning",
