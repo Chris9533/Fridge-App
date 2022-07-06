@@ -1,11 +1,36 @@
 import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
 import * as React from 'react';
-import { Button, Text, TextInput } from 'react-native';
+import { Button, Text, TextInput, ImageBackground, StyleSheet, View, Image } from 'react-native';
 import { doc, getFirestore, setDoc } from "firebase/firestore";
 import { initializeApp } from 'firebase/app';
 import { firebaseConfig } from '../firebase';
+import { Input, Icon, Stack, Center, NativeBaseProvider } from "native-base";
+import { MaterialIcons } from "@expo/vector-icons";
 
 export default function CreateAccount() {
+
+  const image = {uri : "https://media.istockphoto.com/photos/healthy-fresh-rainbow-colored-fruits-and-vegetables-background-picture-id1208790371?k=20&m=1208790371&s=612x612&w=0&h=6BngNrl8TColGkvSGJUKFKIM5bv31Nc8MvQhmmC2LlM="}
+  const styles = StyleSheet.create({
+    container: {
+      flex: 1,
+    },
+    image: {
+      flex: 1,
+      justifyContent: "center"
+    },
+    text: {
+      color: "white",
+      fontSize: 20,
+      fontWeight: "bold",
+      textAlign: "center",
+      backgroundColor: "black"
+    },
+    logo : {
+      width: 200,
+      height:200,
+      marginBottom: 50
+    }
+  })
 
 const [email, setEmail] = React.useState('')
 const [password, setPassword] = React.useState('')
@@ -14,6 +39,7 @@ const [emailError, setEmailError] = React.useState(false)
 const [passwordError, setPasswordError] = React.useState(false)
 const [passwordMatch, setPasswordMatch] = React.useState(false)
 const [existingEmail, setExistingEmail] = React.useState(false)
+const [show, setShow] = React.useState(false);
 
    
     const app = initializeApp(firebaseConfig);
@@ -64,55 +90,50 @@ const [existingEmail, setExistingEmail] = React.useState(false)
 
   }
 
-
-    return (
-        <>
-        <TextInput
-        style={{height: 40, marginTop: 15,
-            backgroundColor: "white",
-            borderWidth: 1,
-            borderColor: 'grey',
-            padding: 10,
-            fontSize: 20}}
-        placeholder="Email"
-        onChangeText={newText => {setEmail(newText)}}
-        defaultValue={""}
+  return ( 
+    <>
+    <View style={styles.container}>
+    <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+  <NativeBaseProvider>
+              <Center flex={1} px="3">
+              <Image
+        style={styles.logo}
+        source={require('../Logo.png')}
       />
-      {emailError && <Text>Invalid Email</Text>}
-      {existingEmail && <Text>Account already exists</Text>}
-      <TextInput
-        style={{height: 40, marginTop: 15,
-            backgroundColor: "white",
-            borderWidth: 1,
-            borderColor: 'grey',
-            padding: 10,
-            fontSize: 20}}
-        placeholder="Password"
-        onChangeText={newText => {setPassword(newText)}}
-        secureTextEntry={true}
-        defaultValue={""}
-      />
-     
-      <TextInput
-        style={{height: 40, marginTop: 15,
-            backgroundColor: "white",
-            borderWidth: 1,
-            borderColor: 'grey',
-            padding: 10,
-            fontSize: 20}}
-        placeholder="Confirm Password"
-        onChangeText={newText => {setConfirmPassword(newText)}}
-        secureTextEntry={true}
-        defaultValue={""}
-      />
-      {passwordError && <Text>Password must be 6 characters</Text>}
-      {passwordMatch && <Text>Passwords must match</Text>}
-      <Button
+  <Stack space={4} w="100%" alignItems="center">
+  <Input 
+  backgroundColor="primary.50"
+  w={{
+  base: "75%",
+  md: "25%"
+  }} InputLeftElement={<Icon as={<MaterialIcons name="person" />} size={5} ml="2" color="primary.600" />} placeholder="Email" onChangeText={newText => {setEmail(newText); setEmailError(false)}}  />
+  {emailError && <Text style={styles.text}>Invalid Email</Text>}
+  {existingEmail && <Text style={styles.text}>Account already exists</Text>}
+  <Input 
+  backgroundColor="primary.50"
+  w={{
+  base: "75%",
+  md: "25%"
+  }} type={show ? "text" : "password"} InputRightElement={<Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="primary.600" onPress={() => setShow(!show)} />} placeholder="Password" onChangeText={newText => {setPassword(newText); setPasswordError(false)}} />
+  <Input
+  backgroundColor="primary.50"
+   w={{
+  base: "75%",
+  md: "25%"
+  }} type={show ? "text" : "password"} InputRightElement={<Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="primary.600" onPress={() => setShow(!show)} />} placeholder="Confirm Password" onChangeText={newText => {setConfirmPassword(newText)}} />
+  {passwordError && <Text style={styles.text}>Password must be 6 characters</Text>}
+  {passwordMatch && <Text style={styles.text}>Passwords must match</Text>}
+  <Button
   onPress={() => {handleCreateAccount()}}
   title="Create Account"
   color="#841584"
   accessibilityLabel="Create account button"
 />
-      </>
-    )
+  </Stack>
+  </Center>
+            </NativeBaseProvider>
+            </ImageBackground>
+  </View>
+            </>);
+
 }
