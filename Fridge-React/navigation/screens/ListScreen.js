@@ -69,14 +69,8 @@ export default function ListScreen({navigation}) {
  }> 
        {display.map((item) => {
        
-        return (
-            
-<<<<<<< HEAD
-        <Card key={item.id} style={styles.shoppingCard}>
-=======
-           
+        return (     
         <Card key={item.id} style={styles.card}>
->>>>>>> 342664ebdcb679744cf899055e47a8ff447bbb84
             <CardAction 
           separator={true} 
            inColumn={false}>
