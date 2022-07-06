@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { View, Text, RefreshControl, ActivityIndicator, Linking } from 'react-native';
+import { View, Text, RefreshControl, ActivityIndicator, Linking, ImageBackground } from 'react-native';
 import { initializeApp } from 'firebase/app';
 import { getFirestore, getDocs, collection, setDoc, doc, updateDoc, increment} from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
@@ -18,6 +18,9 @@ const wait = (timeout) => {
   }
   
 export default function RecipesScreen({navigation}) {
+
+    const image = {uri : 'https://img.freepik.com/free-vector/seamless-background-vegetables-radishes-peppers-cabbage-carrots-broccoli-peas-vector-illustration_1284-42027.jpg?t=st=1657117677~exp=1657118277~hmac=7770a747cc9275418a499832dc98fe626a1ba1ab44cf81050d5ff362d05d5346&w=1060'}
+
         
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
@@ -244,8 +247,10 @@ export default function RecipesScreen({navigation}) {
     if(isLoading) return <ActivityIndicator />
     return (
         <>
-        <Root>
+
         <View>
+        <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+        <Root>
         <DropDownPicker
             multiple={true}
             min={0}
@@ -263,7 +268,7 @@ export default function RecipesScreen({navigation}) {
             mode="BADGE"
             badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
             />
-        <ScrollView refreshControl={
+        <ScrollView contentContainerStyle={{paddingBottom: 160}} refreshControl={
             <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
@@ -388,8 +393,11 @@ export default function RecipesScreen({navigation}) {
                 )
             })}
         </ScrollView>
+
+        </ImageBackground>
         </View>
       </Root>
+
         </>
     )
 }

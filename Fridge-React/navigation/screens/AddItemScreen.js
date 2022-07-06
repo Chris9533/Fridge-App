@@ -11,6 +11,7 @@ import {
   View,
   TouchableOpacity,
   TextInputBase,
+  ImageBackground
 } from "react-native";
 import { CardAction } from "react-native-cards";
 import DateField from "react-native-datefield";
@@ -22,6 +23,10 @@ import { styles } from "../../stylesheet";
 import { NativeBaseProvider, Radio, Select, Box, AspectRatio, Image, Center, Stack, HStack, Heading, VStack, Button, Input } from "native-base";
 
 export default function AddItemScreen({ navigation }) {
+
+  const image = {uri : 'https://img.freepik.com/free-vector/seamless-background-vegetables-radishes-peppers-cabbage-carrots-broccoli-peas-vector-illustration_1284-42027.jpg?t=st=1657117677~exp=1657118277~hmac=7770a747cc9275418a499832dc98fe626a1ba1ab44cf81050d5ff362d05d5346&w=1060'}
+
+
   const [searchTerm, setSearchTerm] = React.useState("");
   const [searchResults, setSearchResults] = React.useState([]);
   const [date, setDate] = React.useState(new Date());
@@ -38,16 +43,13 @@ export default function AddItemScreen({ navigation }) {
   const [radio, setRadio] = React.useState(null);
 
 
-console.log(amount);
-
-  // console.log(radioValue)
   
   const handleSearch = () => {
     
     if (searchTerm.length > 0) {
       axios
       .get(
-        `https://api.spoonacular.com/food/ingredients/search?apiKey=54729ca1c8c14a46ab9a978676777809&query=${searchTerm}&number=5`
+        `https://api.spoonacular.com/food/ingredients/search?apiKey=60ffd5fe64b645b7a13773f9bb346d89&query=${searchTerm}&number=5`
         )
         .then((res) => {
           setSearchResults(res.data.results);
@@ -97,7 +99,8 @@ console.log(amount);
   return (
     <>
       <Root>
-        <View>
+      <View>
+        <ImageBackground source={image} resizeMode="cover" style={styles.image}>
           <SearchBar
             style={{ margin: 10 }}
             fontColor="#c6c6c6"
@@ -292,6 +295,7 @@ console.log(amount);
                 );
               })}
           </ScrollView>
+              </ImageBackground>
         </View>
       </Root>
     </>
