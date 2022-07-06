@@ -65,6 +65,18 @@ export const styles = StyleSheet.create({
       color: '#132257',
       opacity: 1,
       
+    },
+    container: {
+      flex: 1,
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      alignItems: 'flex-start' // if you want to fill rows left to right
+    },
+    item: {
+      width: '50%' // is 50% of container width
+    },
+    caps: {
+      textTransform: 'capitalize',
     }
 
   });

@@ -51,7 +51,7 @@ console.log(amount);
         )
         .then((res) => {
           setSearchResults(res.data.results);
-        });
+        })
       }
     };
   

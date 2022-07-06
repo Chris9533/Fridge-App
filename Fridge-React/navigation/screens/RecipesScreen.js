@@ -9,6 +9,8 @@ import axios from 'axios';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Card, CardImage, CardButton } from 'react-native-cards';
 import DropDownPicker from 'react-native-dropdown-picker';
+import { NativeBaseProvider, Box, AspectRatio, Image, Center, Stack, HStack, Heading, VStack, Button, Input, Divider, Flex, CheckIcon, CloseIcon, FavouriteIcon } from "native-base";
+import { styles } from '../../stylesheet';
 
 const wait = (timeout) => {
     return new Promise(resolve => setTimeout(resolve, timeout));
@@ -95,7 +97,8 @@ export default function RecipesScreen({navigation}) {
                 })
 
 
-        axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&ingredients=${ingredientsStr}&number=5`)
+
+        axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=60ffd5fe64b645b7a13773f9bb346d89&ingredients=${ingredientsStr}&number=5`)
 
             .then(res => {
                 res.data.forEach(recipe => {
@@ -103,6 +106,8 @@ export default function RecipesScreen({navigation}) {
                 })
                 setRecipeList(recipeArr)
             setIsLoading(false)
+            }).catch((err) => {
+                console.log(err)
             })
         getDocs(colRefFavourite)
         .then(snapshot => {
@@ -122,10 +127,13 @@ export default function RecipesScreen({navigation}) {
         setRecipeId(id)
 
 
-        axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&includeNutrition=false`)
+        axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=60ffd5fe64b645b7a13773f9bb346d89&includeNutrition=false`)
+
         .then(res => {
             setRecipeData({source: res.data.sourceUrl, veggie: res.data.vegetarian, fullIng: res.data.extendedIngredients})
             setRecipeIsLoading(false)
+        }).catch((err) => {
+            console.log(err)
         })
     }
 
@@ -215,8 +223,8 @@ export default function RecipesScreen({navigation}) {
             }
            })
 
-       
-       axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=b1dbbfdbe63f4f268ac4fae03746dbd3&ingredients=${dropDownStr}&number=5`)
+
+       axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=60ffd5fe64b645b7a13773f9bb346d89&ingredients=${dropDownStr}&number=5`)
 
            .then(res => {
                res.data.forEach(recipe => {
@@ -260,36 +268,96 @@ export default function RecipesScreen({navigation}) {
           }> 
             {recipeList && recipeList.map(recipe => {
                 return (
-                    <Card key={recipe.id}>
-                        <CardImage source={{uri:recipe.img}} />
-                        <Text>{recipe.title}</Text>
+                    <NativeBaseProvider>
+                         <Box alignItems="center">
+      <Box marginBottom="3%" maxW="80" rounded="lg" overflow="hidden" borderColor="coolGray.200" borderWidth="1" _dark={{
+      borderColor: "coolGray.600",
+      backgroundColor: "gray.700"
+    }} _web={{
+      shadow: 2,
+      borderWidth: 0
+    }} _light={{
+      backgroundColor: "gray.50"
+    }}>
+                    <Box marginTop="10%" key={recipe.id}>
+                    <AspectRatio w="100%" ratio={16 / 9}>
+                        <Image source={{uri:recipe.img}} />
+                        
+                        </AspectRatio>
+
+                        <Stack space={2} alignItems="center">
+                        <Heading marginRight='5%' marginLeft='5%' marginTop="2%" size="sm" ml="-1" textTransform={'capitalize'} justifyContent="space-between">
+                        {recipe.title}
+                        </Heading>
                         <Text>{recipe.ingUsedCount}/{recipe.ingTotal}{' Ingredients Matched'}</Text>
-                        <CardButton title={!selectRecipe ? 'Cook This' : recipeId === recipe.id ? 'Something Else' : 'Cook This'} onPress={() => {handleSwitch(recipe.id)}} />
+
+                        
+                        </Stack>
+                        <Button marginTop="3%" size="sm" variant="solid" colorScheme="emerald" onPress={() => {handleSwitch(recipe.id)}}>
+                        {!selectRecipe ? 'COOK THIS' : recipeId === recipe.id ? 'SOMETHING ELSE' : 'Cook This'}
+                        </Button>
                         {selectRecipe && recipeId === recipe.id ? 
                         <>
-                        <Text>{'You Have'}</Text> 
+                        
+                        <Box alignItems="center">
+                        <Box w="300">
+
+                       
+                      
+                       
+                        <Flex mx="3" marginTop='5%' direction="row" justify="space-around" h="7">
+                         {recipeIsLoading ? <ActivityIndicator /> : <Text>Vegetarian: {recipeData.veggie === false ? <CloseIcon /> : <CheckIcon />}</Text>}
+                        </Flex>
+           
+                        <HStack marginTop='3%' space={2} justifyContent="center">
+                         <Center h="40" w="150" bg="green.300" rounded="md" shadow={3}>
+                         
                         {recipe.ingMatch.map(name => {
-                            return <Text key={name}>{name}</Text>
+                            return <Text style={styles.caps} key={name}>{`- ${name}`}</Text>
                         })}
-                        <Text>{'You Need'}</Text>
+                         </Center>
+
+                         <Center h="40" w="150" bg="red.300" rounded="md" shadow={3}>
+                         
                         {recipe.ingMissing.map(name => {
-                            return <Text key={name}>{name}</Text>
+                            return <Text style={styles.caps} key={name}>{`- ${name}`}</Text>
                         })}
-                        <Text>{'Instructions'}</Text>
-                        {recipeIsLoading ? <ActivityIndicator /> : <Text style={{color: 'blue'}}
+                         </Center>
+      
+                        </HStack>
+                       
+                        <Button marginTop='5%' marginBottom='5%' variant='subtle' colorScheme='emerald' size='sm' onPress={() => {handleShoppingPress(recipe.ingMissing)}}>
+                            ADD MISSING ITEMS TO LIST
+                        </Button>
+
+                       
+
+                        {recipeIsLoading ? <ActivityIndicator /> : <Button size='sm' colorScheme='emerald' variant='subtle' style={{color: 'blue'}}
                             onPress={() => Linking.openURL(recipeData.source)}>
-                        Click Here
-                        </Text>}
-                        <Text>{'Veggie?'}</Text>
-                        {recipeIsLoading ? <ActivityIndicator /> : <Text>{recipeData.veggie.toString()}</Text>}
-                        <CardButton title='Yum' onPress={() => {handleYum(recipeData.fullIng, recipe.title, recipeData.source, recipe.img, recipe.ingUsedCount)}}/>
-                        <CardButton title='Add Missing to List' onPress={() => {handleShoppingPress(recipe.ingMissing)}}/>
-                        {favourites.includes(recipe.title) || optFav.includes(recipe.title) ? <Text>Favourited</Text> : <CardButton title='Favourite' onPress={()=> {handleFavourite(recipe.title, recipeData.source, recipe.img)}}/>}
+                        COOKING INSTRUCTIONS
+                        </Button>}
+
+                     
+                        <Button size='sm' marginTop='5%' marginBottom='5%' variant='subtle' colorScheme='emerald' onPress={() => {handleYum(recipeData.fullIng, recipe.title, recipeData.source, recipe.img, recipe.ingUsedCount)}}>
+                        COOK NOW
+                        </Button>
+                       
+                        </Box>
+                        </Box>
+                        
+                        <Center h='10' rounded="md" shadow={3}>
+                        {favourites.includes(recipe.title) || optFav.includes(recipe.title) ? <FavouriteIcon color='red.600' /> : <FavouriteIcon  onPress={()=> {handleFavourite(recipe.title, recipeData.source, recipe.img)}}/>}
+
+                        </Center>
                         </>
                         : 
                         <></>}
+                        
                        
-                    </Card>
+                    </Box>
+                    </Box>
+                    </Box>
+                    </NativeBaseProvider>
                 )
             })}
         </ScrollView>
