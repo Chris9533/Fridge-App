@@ -19,11 +19,10 @@ export default function LogIn({navigation}) {
     },
     text: {
       color: "white",
-      fontSize: 42,
-      lineHeight: 84,
+      fontSize: 20,
       fontWeight: "bold",
       textAlign: "center",
-      backgroundColor: "#000000c0"
+      backgroundColor: "black"
     },
     logo : {
       width: 200,
@@ -78,14 +77,14 @@ w={{
 base: "75%",
 md: "25%"
 }} InputLeftElement={<Icon as={<MaterialIcons name="person" />} size={5} ml="2" color="primary.600" />} placeholder="Email" onChangeText={newText => {setEmail(newText); setEmailError(false)}} />
-{emailError && <Text>Invalid Email</Text>}
+{emailError && <Text style={styles.text}>Invalid Email</Text>}
 <Input
 backgroundColor="primary.50"
  w={{
 base: "75%",
 md: "25%"
 }} type={show ? "text" : "password"} InputRightElement={<Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="primary.600"  onPress={() => setShow(!show)} />} placeholder="Password" onChangeText={newText => {setPassword(newText); setPasswordError(false)}} />
-{passwordError && <Text>Wrong Password</Text>}
+{passwordError && <Text style={styles.text}>Wrong Password</Text>}
 <Button
   onPress={handleLogIn}
   title="          Login           "

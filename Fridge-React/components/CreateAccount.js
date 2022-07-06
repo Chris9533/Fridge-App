@@ -20,11 +20,10 @@ export default function CreateAccount() {
     },
     text: {
       color: "white",
-      fontSize: 42,
-      lineHeight: 84,
+      fontSize: 20,
       fontWeight: "bold",
       textAlign: "center",
-      backgroundColor: "#000000c0"
+      backgroundColor: "black"
     },
     logo : {
       width: 200,
@@ -108,8 +107,8 @@ const [show, setShow] = React.useState(false);
   base: "75%",
   md: "25%"
   }} InputLeftElement={<Icon as={<MaterialIcons name="person" />} size={5} ml="2" color="primary.600" />} placeholder="Email" onChangeText={newText => {setEmail(newText); setEmailError(false)}}  />
-  {emailError && <Text>Invalid Email</Text>}
-  {existingEmail && <Text>Account already exists</Text>}
+  {emailError && <Text style={styles.text}>Invalid Email</Text>}
+  {existingEmail && <Text style={styles.text}>Account already exists</Text>}
   <Input 
   backgroundColor="primary.50"
   w={{
@@ -122,8 +121,8 @@ const [show, setShow] = React.useState(false);
   base: "75%",
   md: "25%"
   }} type={show ? "text" : "password"} InputRightElement={<Icon as={<MaterialIcons name={show ? "visibility" : "visibility-off"} />} size={5} mr="2" color="primary.600" onPress={() => setShow(!show)} />} placeholder="Confirm Password" onChangeText={newText => {setConfirmPassword(newText)}} />
-  {passwordError && <Text>Password must be 6 characters</Text>}
-  {passwordMatch && <Text>Passwords must match</Text>}
+  {passwordError && <Text style={styles.text}>Password must be 6 characters</Text>}
+  {passwordMatch && <Text style={styles.text}>Passwords must match</Text>}
   <Button
   onPress={() => {handleCreateAccount()}}
   title="Create Account"
