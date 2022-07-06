@@ -99,7 +99,7 @@ export default function ProfileScreen({navigation}) {
                 </Card>) 
             })}
             <Text>Recipe History</Text>
-            {recipeHistory.length === 0 ? <Text>Cook something</Text> : recipeHistory.map(recipe => {
+            {recipeHistory.length === 0 ? <Text>Cook something</Text> : recipeHistory.reverse().map(recipe => {
                 return (<Card key={recipe.title}>
                     <CardImage source={{uri: recipe.img}} />
                     <Text>{recipe.title}</Text>

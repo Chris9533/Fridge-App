@@ -288,7 +288,7 @@ return (
           }} _dark={{
             color: "violet.400"
           }} fontWeight="500" ml="-0.5" mt="-1">
-              {`${item.itemObj.amount} In Stock`}
+              {+(item.itemObj.amount.replace(/[^\d.-]/g, '')) > 0 ? `${item.itemObj.amount} In Stock` : 'Out Of Stock'}
             </Text>
           </Stack>
 
