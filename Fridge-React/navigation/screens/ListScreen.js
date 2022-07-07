@@ -75,7 +75,7 @@ export default function ListScreen({navigation}) {
           separator={true} 
            inColumn={false}>
             <CardTitle 
-         title={item.itemObj.title} 
+         title={item.itemObj.title.charAt(0).toUpperCase() + item.itemObj.title.slice(1)} 
             />
             <CardButton
             onPress={() => {handleRemove(item.itemObj.title)}}
