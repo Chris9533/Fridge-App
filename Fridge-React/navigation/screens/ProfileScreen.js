@@ -27,6 +27,7 @@ export default function ProfileScreen({navigation}) {
     const [isLoading, setIsLoading] = React.useState(true)
     const [recipeHistory, setRecipeHistory] = React.useState([])
     const [foodScore, setFoodScore] = React.useState({})
+    const [rankIcon, setRankIcon] = React.useState(<></>)
 
     const onRefresh = React.useCallback(() => {
         setRefreshing(true)
@@ -55,10 +56,18 @@ export default function ProfileScreen({navigation}) {
             setRecipeHistory(htyArr)
         getDoc(colRefScore).then(snapshot => {
             setFoodScore(snapshot.data())
-        })   
-    setIsLoading(false) 
+            if(Math.floor(snapshot.data().score / 10) === 1) {
+                setRankIcon(<Image key={`${foodScore.score}` + `${Date.now()}`} source={require('./Bronze.png')} style={{width: 10, height: 10, padding: 5}} alt={'rank icon'} />)
+            }
+            if(Math.floor(snapshot.data().score / 10) === 2) {
+                setRankIcon(<Image key={`${foodScore.score}` + `${Date.now()}`} source={require('./Silver.png')} style={{width: 20, height: 20, marginRight: 10}} alt={'rank icon'} />)
+            }
+            if(Math.floor(snapshot.data().score / 10) === 3) { 
+                setRankIcon(<Image key={`${foodScore.score}` + `${Date.now()}`} source={require('./Gold.png')} style={{width: 20, height: 20, marginRight: 10}} alt={'rank icon'} />)
+            }
+            setIsLoading(false) 
         })
-       
+        })
         })
          
     }, [refreshing])
@@ -84,8 +93,9 @@ export default function ProfileScreen({navigation}) {
                     >
             LOG OUT
         </Button>
-        <Text style={{fontSize: 17, textAlign: 'right', padding: 5, color: 'white', backgroundColor: 'black'}}>Level: {Math.floor(foodScore.score/ 10) } Exp: {foodScore.score % 10} / 10</Text>
-         
+        
+        <Text style={{fontSize: 17, textAlign: 'right', padding: 5, color: 'white', backgroundColor: 'black'}}>{rankIcon}Level: {Math.floor(foodScore.score/ 10) } Exp: {foodScore.score % 10} / 10</Text>
+        
         
         <ScrollView contentContainerStyle={{paddingBottom: 60}} refreshControl={
             <RefreshControl
