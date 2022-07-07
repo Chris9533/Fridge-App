@@ -34,6 +34,8 @@ export default function HomeScreen({navigation}) {
 ]);
 
 
+
+
   const [display, setDisplay] = React.useState([])
   const [searchTerm, setSearchTerm] = React.useState("")
   const [refreshing, setRefreshing] = React.useState(false)
@@ -211,7 +213,11 @@ if (noFilter) {
 if (display.length === 0 ) {
   return (
     <>
+    <View style={styles.container}>
+     <ImageBackground source={image} resizeMode="cover" style={styles.image}>
     <NativeBaseProvider>
+    <Center flex={1} px="3">
+    <Stack space={4} w="100%" alignItems="center">
     <ScrollView refreshControl={
    <RefreshControl
    refreshing={refreshing}
@@ -226,7 +232,11 @@ if (display.length === 0 ) {
   accessibilityLabel="Create account button"
 >Add Items</Button>
 </ScrollView>
+</Stack>
+    </Center>
     </NativeBaseProvider>
+    </ImageBackground>
+    </View>
     </>
   )
 } else {
