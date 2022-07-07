@@ -93,7 +93,7 @@ export default function ProfileScreen({navigation}) {
             onRefresh={onRefresh}
             /> 
           }> 
-                <Heading style={{fontSize: 25, textAlign: 'center', backgroundColor: 'white'}}> {<FavouriteIcon color='red.500' />} Favourite Recipes {<FavouriteIcon color='red.500' />}</Heading>
+                <Heading style={{fontSize: 25, textAlign: 'center', backgroundColor: 'white', marginLeft: 60, marginRight: 60, marginTop: 10, borderRadius: 10}}> {<FavouriteIcon color='red.500' />} Favourite Recipes {<FavouriteIcon color='red.500' />}</Heading>
             {favRecipe.length === 0 ? <Text>Add some Favourites</Text> : <Swiper height={330} showsButtons={true} showsPagination={false}>{favRecipe.map(recipe => {
                 return (
                     <NativeBaseProvider>
@@ -131,7 +131,7 @@ export default function ProfileScreen({navigation}) {
                 </NativeBaseProvider>
                 ) 
             })}</Swiper>}
-                <Heading marginTop='1%' style={{fontSize: 25, textAlign: 'center', backgroundColor: 'white'}} >Recipe History</Heading>
+                <Heading marginTop='1%' style={{fontSize: 25, textAlign: 'center', backgroundColor: 'white', marginLeft: 75, marginRight: 75, borderRadius: 10}} >Recipe History</Heading>
             {recipeHistory.length === 0 ? <Text>Cook something</Text> : <Swiper height={280} showsButtons={true} showsPagination={false}>{recipeHistory.reverse().map(recipe => {
                 return (
                     <NativeBaseProvider>
