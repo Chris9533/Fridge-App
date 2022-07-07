@@ -102,7 +102,7 @@ export default function RecipesScreen({navigation}) {
 
 
 
-        axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=60ffd5fe64b645b7a13773f9bb346d89&ingredients=${ingredientsStr}&number=5`)
+        axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=8074d0fced814e7dae696d0ec17fc3d9&ingredients=${ingredientsStr}&number=5`)
 
             .then(res => {
                 res.data.forEach(recipe => {
@@ -131,7 +131,7 @@ export default function RecipesScreen({navigation}) {
         setRecipeId(id)
 
 
-        axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=60ffd5fe64b645b7a13773f9bb346d89&includeNutrition=false`)
+        axios.get(`https://api.spoonacular.com/recipes/${id}/information?apiKey=8074d0fced814e7dae696d0ec17fc3d9&includeNutrition=false`)
 
         .then(res => {
             setRecipeData({source: res.data.sourceUrl, veggie: res.data.vegetarian, fullIng: res.data.extendedIngredients})
@@ -228,7 +228,7 @@ export default function RecipesScreen({navigation}) {
            })
 
 
-       axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=60ffd5fe64b645b7a13773f9bb346d89&ingredients=${dropDownStr}&number=5`)
+       axios.get(`https://api.spoonacular.com/recipes/findByIngredients?apiKey=8074d0fced814e7dae696d0ec17fc3d9&ingredients=${dropDownStr}&number=5`)
 
            .then(res => {
                res.data.forEach(recipe => {
@@ -268,7 +268,7 @@ export default function RecipesScreen({navigation}) {
             mode="BADGE"
             badgeDotColors={["#e76f51", "#00b4d8", "#e9c46a", "#e76f51", "#8ac926", "#00b4d8", "#e9c46a"]}
             />
-        <ScrollView contentContainerStyle={{paddingBottom: 160}} refreshControl={
+        <ScrollView contentContainerStyle={{paddingBottom: 40}} refreshControl={
             <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
