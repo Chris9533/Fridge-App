@@ -217,14 +217,14 @@ if (display.length === 0 ) {
      <ImageBackground source={image} resizeMode="cover" style={styles.image}>
     <NativeBaseProvider>
     <Center flex={1} px="3">
-    <Stack space={4} w="100%" alignItems="center">
+    <Stack space={4} w="100%" alignItems="center" marginTop={250}>
     <ScrollView refreshControl={
    <RefreshControl
    refreshing={refreshing}
    onRefresh={onRefresh}
    />
  }> 
-    <Text>You have no items in storage</Text>
+    <Text style={{fontSize: 20, textAlign: 'center', backgroundColor: 'white', marginLeft: 30, marginRight: 30, marginBottom: 20, borderRadius: 5, paddingLeft: 5, paddingRight:5}}>You have no items in storage</Text>
     <Button
   onPress={() => {navigation.navigate('Add Item')}}
   title="Create Account"
